@@ -47,7 +47,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
 )
 
 ROOT_URLCONF = 'pvappengine.urls'
@@ -76,8 +75,13 @@ WSGI_APPLICATION = 'pvappengine.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'mysql.connector.django', 
+	#'ENGINE': 'django.db.backends.mysql', #-> not support for python3 2015/12/2
+        'NAME': 'pvstation',
+	'USER': 'pvstation',
+	'PASSWORD': 'raspberry',
+	'HOST': 'localhost',
+	'PORT': '3306',
     }
 }
 
@@ -100,3 +104,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR,'static/')

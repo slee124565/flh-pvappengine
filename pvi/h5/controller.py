@@ -3,14 +3,21 @@ from pvi.models import RegData
 from django import utils
 #from datetime import datetime
 
-import minimalmodbus
 import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler('/home/pi/h5_cron_task.log')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
-instr = minimalmodbus.Instrument('/dev/ttyUSB0',2)    
-instr.serial.baudrate = 9600    
-instr.debug=True
+import minimalmodbus
+#instr = minimalmodbus.Instrument('/dev/ttyUSB0',2)    
+#instr.serial.baudrate = 9600    
+#instr.debug=True
 
 def modbus_input_register_read(reg_addr):
+    return 100
     try:
         val = instr.read_register(int(reg_addr)-1,functioncode=4)
         return val
@@ -46,8 +53,8 @@ def save_all_pvi_input_register_value():
                            value = float(reg_value),
                            )
             reg_data.save()
-            logging.info('TODO')
-        except:
-            logging.error('TODO')
+            logger.info('saved,'+reg_name+','+str(reg_value))
+        except Exception as e:
+            logger.error('save pvi input register vaule error.', exc_info=True)
             
 

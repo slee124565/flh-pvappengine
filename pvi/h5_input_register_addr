@@ -1,0 +1,69 @@
+1032	Inverter ID
+1033	RTC_Year
+1034	RTC_Month
+1035	RTC_Day
+1036	RTC_Hour
+1037	RTC_Minute
+1038	RTC_Second
+1040	FW1 Revision
+1041	FW1 Date
+1042	FW2 Revision
+1043	FW2 Date
+1044	FW3 Revision
+1045	FW3 Date
+1046	FW4 Revision
+1047	FW4 Date
+1048	Inverter Status
+1049	Reconnected Time
+1056	Measurement Index
+1057	Voltage
+1058	Current
+1059	Wattage
+1060	Frequency
+1061	Percentage
+1062	Redundant Voltage
+1063	Redundant Frequency
+1068	Adc Voltage
+1069	Adc Current
+1070	Adc Wattage
+1071	Adc Redundant Voltage
+1072	Today Wh
+1073	
+1074	Today Runtime
+1075	
+1076	DC Life Wh
+1077	
+1078	DC Life Runtime
+1079	
+1080	Delta 5k: Amb Temp
+1081	Delta 5k: BoostHs Temp
+1082	Delta5k: InvHs Temp
+1088	Event Index
+1089	Event (index+0)
+1090	Event (index+1)
+1091	Event (index+2)
+1092	Event (index+3)
+1093	Event (index+4)
+1094	Event (index+5)
+1095	Event (index+6)
+1096	Event (index+7)
+1097	Event (index+8)
+1098	Event (index+9)
+40975	Serial number 0,1
+40976	Serial number 2,3
+40977	Serial number 4,5
+40978	Serial number 6,7
+40979	Serial number 8,9
+40980	Serial number 10,11
+1152	Delta 5k:Max Amb Temp
+1153	Delta 5k:Max BoostHs Temp
+1154	Delta 5k:Max InvHs Temp
+1160	Delta 5K:Solar 1 RLeakage1
+1161	Delta 5K:Solar 1 RLeakage2
+1162	Delta 5K:Solar 1 RLeakage3
+1163	Delta 5K:Solar 1 RLeakageAvg
+1164	Delta 5K:Adins_adc
+53252	AC Life Wh
+53253	
+53254	AC Life Runtime
+53255	

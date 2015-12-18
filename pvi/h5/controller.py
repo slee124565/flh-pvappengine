@@ -12,12 +12,11 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 import minimalmodbus
-#instr = minimalmodbus.Instrument('/dev/ttyUSB0',2)    
-#instr.serial.baudrate = 9600    
-#instr.debug=True
+instr = minimalmodbus.Instrument('/dev/ttyUSB0',2)    
+instr.serial.baudrate = 9600    
+instr.debug=True
 
 def modbus_input_register_read(reg_addr):
-    return 100
     try:
         val = instr.read_register(int(reg_addr)-1,functioncode=4)
         return val

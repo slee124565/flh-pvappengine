@@ -5,11 +5,11 @@ from django import utils
 
 import logging
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler('/home/pi/h5_cron_task.log')
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+#logger.setLevel(logging.DEBUG)
+#handler = logging.FileHandler('/home/pi/h5_cron_task.log')
+#formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+#handler.setFormatter(formatter)
+#logger.addHandler(handler)
 
 import minimalmodbus
 instr = minimalmodbus.Instrument('/dev/ttyUSB0',2)    

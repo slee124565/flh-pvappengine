@@ -51,15 +51,19 @@ def get_register_value_by_name(reg_name):
         reg_len = reg_entry[2]
         reg_value = 0
         logger.debug('reading register: ' + reg_name + ',' + str(reg_addr) + ',' + str(reg_len))
-        if reg_len == 1:
-            reg_value = int(modbus_input_register_read(reg_addr))
-            logger.debug('1st register vale: ' + str(reg_value))
-        elif reg_len == 2:
-            reg_value = int(modbus_input_register_read(reg_addr))
-            logger.debug('1st register vale: ' + str(reg_value))
-            reg_value += (int(modbus_input_register_read(int(reg_addr)+1))*0x10000)
-        else:
-            raise Exception('register length ' + str(reg_len) + ' not implement!')
+        try:
+            if reg_len == 1:
+                reg_value = int(modbus_input_register_read(reg_addr))
+                logger.debug('1st register vale: ' + str(reg_value))
+            elif reg_len == 2:
+                reg_value = int(modbus_input_register_read(reg_addr))
+                logger.debug('1st register vale: ' + str(reg_value))
+                reg_value += (int(modbus_input_register_read(int(reg_addr)+1))*0x10000)
+            else:
+                raise Exception('register length ' + str(reg_len) + ' not implement!')
+        except TypeError as err:
+            logger.warning('read register' + reg_name + ' value fail.')
+            return None
     else:
         raise Exception('register name ' + reg_name + ' not know!')
 
@@ -72,14 +76,17 @@ def save_all_pvi_input_register_value():
             reg_addr = INPUT_REGISTER[reg_name][0]
             try:
                 reg_value = get_register_value_by_name(reg_name)
-                reg_data = RegData(modbus_id=MODBUS_ID,
-                            pvi_name=PVI_NAME,
-                            date = utils.timezone.now(),
-                            address = reg_addr,
-                            value = float(reg_value),
-                            )
-                reg_data.save()
-                logger.info('saved,'+reg_name+','+str(reg_value))
+                if reg_value:
+                    reg_data = RegData(modbus_id=MODBUS_ID,
+                                pvi_name=PVI_NAME,
+                                date = utils.timezone.now(),
+                                address = reg_addr,
+                                value = float(reg_value),
+                                )
+                    reg_data.save()
+                    logger.info('saved,'+reg_name+','+str(reg_value))
+                else:
+                    logger.info('not save,'+reg_name)
             except Exception as e:
                 logger.error('save pvi input register value error.', exc_info=True)
         else:

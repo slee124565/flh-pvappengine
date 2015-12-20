@@ -94,5 +94,5 @@ def save_all_pvi_input_register_value():
                 logger.error('save pvi input register value error.', exc_info=True)
         else:
             logger.error('unknown register name %s in polling list!' % reg_name)
-    logger.debug(str(read_log))
+    logger.debug('read log:'+str(read_log))
 

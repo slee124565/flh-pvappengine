@@ -17,6 +17,8 @@ instr.serial.baudrate = 9600
 instr.serial.timeout = 0.1
 instr.debug=True
 
+import time
+
 Register_Polling_List = [
                     'Inverter Status',
                     'Measurement Index',
@@ -62,7 +64,7 @@ def get_register_value_by_name(reg_name):
             else:
                 raise Exception('register length ' + str(reg_len) + ' not implement!')
         except TypeError as err:
-            logger.warning('read register' + reg_name + ' value fail.')
+            logger.warning('read register ' + reg_name + ' value fail.')
             return None
     else:
         raise Exception('register name ' + reg_name + ' not know!')
@@ -78,7 +80,14 @@ def save_all_pvi_input_register_value():
             reg_addr = INPUT_REGISTER[reg_name][0]
             try:
                 reg_value = get_register_value_by_name(reg_name)
-                if reg_value:
+                count = 1
+                while (reg_name == 'Inverter Status') and (reg_value is None) and (count < 3):
+                    logger.warning('read inverter status fail, retry ' + str(count) + ' after 5 seconds.')
+                    time.sleep(5)
+                    reg_value = get_register_value_by_name(reg_name)
+                    count += 1
+                    
+                if not reg_value is None:
                     reg_data = RegData(modbus_id=MODBUS_ID,
                                 pvi_name=PVI_NAME,
                                 date = utils.timezone.now(),
@@ -86,13 +95,17 @@ def save_all_pvi_input_register_value():
                                 value = float(reg_value),
                                 )
                     reg_data.save()
-                    logger.info('saved,'+reg_name+','+str(reg_value))
+                    logger.debug('saved,'+reg_name+','+str(reg_value))
                 else:
-                    logger.info('not save,'+reg_name)
+                    logger.debug('not save,'+reg_name)
                 read_log.append((reg_name,reg_value))
             except Exception as e:
                 logger.error('save pvi input register value error.', exc_info=True)
         else:
             logger.error('unknown register name %s in polling list!' % reg_name)
-    logger.debug('read log:'+str(read_log))
+    logger.info('dump: '+str(read_log))
 
+if __name__ == '__main__':
+    while True:
+        save_all_pvi_input_register_value()
+        time.sleep(5)

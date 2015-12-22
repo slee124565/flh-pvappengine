@@ -106,6 +106,11 @@ def save_all_pvi_input_register_value():
     logger.info('dump: '+str(read_log))
 
 if __name__ == '__main__':
+    import os, sys
+    import django
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'pvappengin_local.settings'
+    sys.path.append(os.path.dirname(os.path.dirname(os.getcwd())))
+    django.setup()
     while True:
         save_all_pvi_input_register_value()
         time.sleep(5)

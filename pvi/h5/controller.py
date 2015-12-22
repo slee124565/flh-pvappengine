@@ -2,8 +2,9 @@
 if __name__ == '__main__':
     import os, sys
     import django
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'pvappengin_local.settings'
-    sys.path.append(os.path.dirname(os.path.dirname(os.getcwd())))
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'pvappengine.settings'
+    sys_path_to_add = '/home/pi/pvappengine'
+    sys.path.append(sys_path_to_add)
     django.setup()
 
 from pvi.h5 import *

@@ -90,8 +90,8 @@ def save_all_pvi_input_register_value():
             try:
                 reg_value = get_register_value_by_name(reg_name)
                 count = 1
-                while (reg_name == 'Inverter Status') and (reg_value is None) and (count < 3):
-                    logger.warning('read inverter status fail, retry ' + str(count) + ' after 5 seconds.')
+                while (reg_value is None) and (count < 3):
+                    logger.warning('read [' + reg_name + '] fail, retry ' + str(count) + ' after 5 seconds.')
                     time.sleep(5)
                     reg_value = get_register_value_by_name(reg_name)
                     count += 1

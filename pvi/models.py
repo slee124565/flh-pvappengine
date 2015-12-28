@@ -20,6 +20,6 @@ class RegData(models.Model):
     def save(self, *args, **kwargs):
         self.date = datetime.now()
         self.prob_date = self.date.date()
-        self.prob_date = self.date.time()
+        self.prob_time = self.date.time()
         self.prob_hour = self.date.hour
         super(RegData, self).save(*args, **kwargs)   

@@ -1,4 +1,5 @@
 from django.db import models
+#from django.utils import timezone
 from datetime import datetime
 
 def get_current_time_hour():
@@ -18,7 +19,8 @@ class RegData(models.Model):
     sync_flag = models.BooleanField('sync flag with cloud',default=False)
 
     def save(self, *args, **kwargs):
-        self.date = datetime.now()
+        if self.date is None:
+            self.date = datetime.now()
         self.prob_date = self.date.date()
         self.prob_time = self.date.time()
         self.prob_hour = self.date.hour

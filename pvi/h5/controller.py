@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
 from pvi.h5 import *
 from pvi.models import RegData
-from django import utils
+#from django import utils
 #from datetime import datetime
 
 import logging
@@ -99,7 +99,7 @@ def save_all_pvi_input_register_value():
                 if not reg_value is None:
                     reg_data = RegData(modbus_id=MODBUS_ID,
                                 pvi_name=PVI_NAME,
-                                date = utils.timezone.now(),
+                                #date = datetime.now(),
                                 address = reg_addr,
                                 value = float(reg_value),
                                 )

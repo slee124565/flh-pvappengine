@@ -1,18 +1,9 @@
 
-if __name__ == '__main__':
-    import os, sys
-    import django
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'pvappengine.settings'
-    sys_path_to_add = '/home/pi/pvappengine'
-    sys.path.append(sys_path_to_add)
-    django.setup()
-
 from pvi.h5 import *
 from pvi.models import RegData
-#from django import utils
-#from datetime import datetime
+from django.db.models import Max
 
-import logging
+import logging, sys, datetime
 logger = logging.getLogger(__name__)
 #logger.setLevel(logging.DEBUG)
 #handler = logging.FileHandler('/home/pi/h5_cron_task.log')
@@ -21,10 +12,11 @@ logger = logging.getLogger(__name__)
 #logger.addHandler(handler)
 
 import minimalmodbus
-instr = minimalmodbus.Instrument('/dev/ttyUSB0',2)    
-instr.serial.baudrate = 9600    
-instr.serial.timeout = 0.1
-instr.debug=True
+if not sys.platform == 'win32':
+    instr = minimalmodbus.Instrument('/dev/ttyUSB0',2)    
+    instr.serial.baudrate = 9600    
+    instr.serial.timeout = 0.1
+    instr.debug=True
 
 import time
 
@@ -99,7 +91,7 @@ def save_all_pvi_input_register_value():
                 if not reg_value is None:
                     reg_data = RegData(modbus_id=MODBUS_ID,
                                 pvi_name=PVI_NAME,
-                                #date = datetime.now(),
+                                #date = datetime.datetime.now(),
                                 address = reg_addr,
                                 value = float(reg_value),
                                 )
@@ -113,6 +105,42 @@ def save_all_pvi_input_register_value():
         else:
             logger.error('unknown register name %s in polling list!' % reg_name)
     logger.info('dump: '+str(read_log))
+
+def get_pvi_energy_info_json(period_type='hourly'):
+    register_name = 'Today Wh'
+    register_address = INPUT_REGISTER.get(register_name)[RegCol.address.value]
+    logger.debug('get_pvi_energy_info_json with period_type %s' % period_type)
+    if period_type == 'hourly':
+        queryset = RegData.objects.filter(address=register_address
+                                ).values( 'prob_date', 'prob_hour'
+                                ).annotate(Max('value')
+                                ).order_by('-prob_date','-prob_hour')
+        logger.debug('sql cmd: %s' % str(queryset.query))
+        info = []
+        logger.debug('queryset count %d' % queryset.count())
+        for entry in queryset[:36]:
+            #logger.debug(entry['prob_date'])
+            #logger.debug(entry['prob_hour'])
+            t_hour = entry['prob_hour']
+            t_time = datetime.time(t_hour,0,0)
+            #logger.debug(str(t_time))
+            info.append([datetime.datetime.combine(entry['prob_date'],t_time),entry['value__max']])
+        logger.debug('query return:\n%s' % str(info))
+        return str(info)
+    elif period_type == 'daily':
+        queryset = queryset = RegData.objects.filter(address=register_address
+                                            ).values('prob_date'
+                                            ).annotate(Max('value')
+                                            ).order_by('prob_date')
+        info = []
+        for entry in queryset:
+            info.append([entry['prob_date'],entry['value__max']])
+        logger.debug('query return:\n%s' % str(info))
+        return str(info)
+        
+    else:
+        pass
+
 
 if __name__ == '__main__':
     while True:

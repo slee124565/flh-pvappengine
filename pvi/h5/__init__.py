@@ -1,5 +1,12 @@
+from enum import Enum
+
 MODBUS_ID = 2
 PVI_NAME = 'H5'
+
+class RegCol(Enum):
+    address = 0
+    name = 1
+    length = 2
 
 HOLDING_REGISTER = {
     "Measurement Index": [

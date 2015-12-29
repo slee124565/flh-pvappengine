@@ -20,7 +20,7 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
-    #url(r'^pvi/query/$(pvi_name)/$(period_type)/$(info_name)', pvi.http.query),
+    #url(r'^pvi/query/$(pvi_name)/$(period_type)/$(info_name)', pvi.http_api.query),
     url(r'^pvi/', include('pvi.urls')),
 
 ]

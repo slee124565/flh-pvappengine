@@ -118,7 +118,10 @@ def get_pvi_energy_info_json(period_type='hourly'):
         logger.debug('sql cmd: %s' % str(queryset.query))
         info = []
         logger.debug('queryset count %d' % queryset.count())
-        for entry in queryset[:36]:
+        max_report_len = 48 # last 48 hours
+        if queryset.count() < max_report_len:
+            max_report_len = queryset.count()
+        for entry in queryset[:max_report_len]:
             #logger.debug(entry['prob_date'])
             #logger.debug(entry['prob_hour'])
             t_hour = entry['prob_hour']
@@ -131,15 +134,18 @@ def get_pvi_energy_info_json(period_type='hourly'):
         queryset = queryset = RegData.objects.filter(address=register_address
                                             ).values('prob_date'
                                             ).annotate(Max('value')
-                                            ).order_by('prob_date')
+                                            ).order_by('-prob_date')
         info = []
-        for entry in queryset:
+        max_report_len = 45 #days
+        if queryset.count() < max_report_len:
+            max_report_len = queryset.count()
+        for entry in queryset[:max_report_len]:
             info.append([entry['prob_date'],entry['value__max']])
         logger.debug('query return:\n%s' % str(info))
         return str(info)
         
     else:
-        pass
+        return None
 
 
 if __name__ == '__main__':

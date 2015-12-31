@@ -142,6 +142,7 @@ def get_pvi_energy_info_json(period_type='daily'):
         for entry in queryset[:max_report_len]:
             info.append([entry['prob_date'],entry['value__max']])
         logger.debug('query return:\n%s' % str(info))
+        info.sort(key=lambda x: x[0])
         return info
         
     else:

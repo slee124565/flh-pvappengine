@@ -106,7 +106,7 @@ def save_all_pvi_input_register_value():
             logger.error('unknown register name %s in polling list!' % reg_name)
     logger.info('dump: '+str(read_log))
 
-def get_pvi_energy_info_json(period_type='hourly'):
+def get_pvi_energy_info_json(period_type='daily'):
     register_name = 'Today Wh'
     register_address = INPUT_REGISTER.get(register_name)[RegCol.address.value]
     logger.debug('get_pvi_energy_info_json with period_type %s' % period_type)
@@ -129,7 +129,7 @@ def get_pvi_energy_info_json(period_type='hourly'):
             #logger.debug(str(t_time))
             info.append([datetime.datetime.combine(entry['prob_date'],t_time),entry['value__max']])
         logger.debug('query return:\n%s' % str(info))
-        return str(info)
+        return info
     elif period_type == 'daily':
         queryset = queryset = RegData.objects.filter(address=register_address
                                             ).values('prob_date'
@@ -142,7 +142,7 @@ def get_pvi_energy_info_json(period_type='hourly'):
         for entry in queryset[:max_report_len]:
             info.append([entry['prob_date'],entry['value__max']])
         logger.debug('query return:\n%s' % str(info))
-        return str(info)
+        return info
         
     else:
         return None

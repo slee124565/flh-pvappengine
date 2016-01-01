@@ -12,7 +12,7 @@ def get_pvi_type_by_name(pvi_name):
     else:
         return None
     
-def query(request,pvi_name,period_type,info_name):
+def query(request,pvi_name='H5',period_type='daily',info_name='energy'):
     if info_name == INFO_KEY_ENERGY:
         if period_type in ['hourly','daily']:
             if get_pvi_type_by_name(pvi_name) == PVI_TYPE_DELTA_PRI_H5:

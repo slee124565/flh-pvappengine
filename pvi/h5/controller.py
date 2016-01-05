@@ -148,6 +148,13 @@ def get_pvi_energy_info_json(period_type='daily'):
     else:
         return None
 
+def get_polling_input_register_value():
+    info = []
+    for reg_name in Register_Polling_List:
+        reg_value = get_register_value_by_name(reg_name)
+        info.append([reg_name,reg_value])
+    return info
+
 
 if __name__ == '__main__':
     while True:

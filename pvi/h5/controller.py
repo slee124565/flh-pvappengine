@@ -129,7 +129,6 @@ def get_pvi_energy_info_json(period_type='daily'):
             #logger.debug(str(t_time))
             info.append([datetime.datetime.combine(entry['prob_date'],t_time),entry['value__max']])
         logger.debug('query return:\n%s' % str(info))
-        return info
     elif period_type == 'daily':
         queryset = queryset = RegData.objects.filter(address=register_address
                                             ).values('prob_date'
@@ -143,10 +142,13 @@ def get_pvi_energy_info_json(period_type='daily'):
             info.append([entry['prob_date'],entry['value__max']])
         logger.debug('query return:\n%s' % str(info))
         info.sort(key=lambda x: x[0])
-        return info
         
     else:
         return None
+    
+    #-> each unit read is 10Wh
+    info = [[entry[0],entry[1]*10] for entry in info]
+    return info
 
 def get_polling_input_register_value():
     info = []

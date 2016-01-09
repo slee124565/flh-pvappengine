@@ -30,6 +30,6 @@ class CurrConditions(models.Model):
             db_entry = CurrConditions(
                                    temperature = float(curr_weather[0]['ApparentTemperature']['Metric']['Value']),
                                    uv = int(curr_weather[0]['UVIndex']),
-                                   visibility = float(curr_weather[0]['Visibility'])
+                                   visibility = float(curr_weather[0]['Visibility']['Metric']['Value'])
                                    )
             db_entry.save()

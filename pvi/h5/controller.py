@@ -11,12 +11,14 @@ logger = logging.getLogger(__name__)
 #handler.setFormatter(formatter)
 #logger.addHandler(handler)
 
-import minimalmodbus
-if not sys.platform == 'win32':
+import minimalmodbus, os
+if os.path.exists('/dev/ttyUSB0'):
     instr = minimalmodbus.Instrument('/dev/ttyUSB0',2)    
     instr.serial.baudrate = 9600    
     instr.serial.timeout = 0.1
     instr.debug=True
+else:
+    logger.warning('pvi connection is not exist! enter simulation mode')
 
 import time
 

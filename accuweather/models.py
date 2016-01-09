@@ -20,6 +20,15 @@ class CurrConditions(models.Model):
         self.prob_hour = self.prob_time.hour
         super(CurrConditions, self).save(*args, **kwargs)   
 
+    def __str__(self):
+        return ','.join([str(self.prob_date),
+                         str(self.prob_time),
+                         str(self.prob_hour),
+                         str(self.temperature),
+                         str(self.uv),
+                         str(self.visibility),
+                         str(self.sync_flag)])
+    
     @classmethod
     def save_current_location_condition(cls):
         api_uri = AccuWeather_API.format(locationKey=current_location_key,
@@ -33,3 +42,5 @@ class CurrConditions(models.Model):
                                    visibility = float(curr_weather[0]['Visibility']['Metric']['Value'])
                                    )
             db_entry.save()
+            logger.info('save pvstion current condition: %s' % str(db_entry) )
+            

@@ -177,6 +177,11 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False
         },
+        'accuweather.models': {
+            'handlers': ['console','default'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
         'django.request': {
             'handlers': ['request_handler'],
             'level': 'DEBUG',

@@ -25,3 +25,5 @@ class RegData(models.Model):
         self.prob_time = self.date.time()
         self.prob_hour = self.date.hour
         super(RegData, self).save(*args, **kwargs)   
+
+    

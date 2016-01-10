@@ -2,8 +2,10 @@
 from pvi.h5 import *
 from pvi.models import RegData
 from django.db.models import Max
+from datetime import datetime, date, time, timedelta
+from pvi import PVIQueryInfo
 
-import logging, sys, datetime
+import logging, sys
 logger = logging.getLogger(__name__)
 #logger.setLevel(logging.DEBUG)
 #handler = logging.FileHandler('/home/pi/h5_cron_task.log')
@@ -20,7 +22,6 @@ if os.path.exists('/dev/ttyUSB0'):
 else:
     logger.warning('pvi connection is not exist! enter simulation mode')
 
-import time
 
 Register_Polling_List = [
                     'Inverter Status',
@@ -127,9 +128,9 @@ def get_pvi_energy_info_json(period_type='daily'):
             #logger.debug(entry['prob_date'])
             #logger.debug(entry['prob_hour'])
             t_hour = entry['prob_hour']
-            t_time = datetime.time(t_hour,0,0)
+            t_time = time(t_hour,0,0)
             #logger.debug(str(t_time))
-            info.append([datetime.datetime.combine(entry['prob_date'],t_time),entry['value__max']])
+            info.append([datetime.combine(entry['prob_date'],t_time),entry['value__max']])
         logger.debug('query return:\n%s' % str(info))
     elif period_type == 'daily':
         queryset = queryset = RegData.objects.filter(address=register_address
@@ -159,6 +160,95 @@ def get_polling_input_register_value():
         info.append([reg_name,reg_value])
     return info
 
+def query_pvi_info(pvi_name,pvi_info=PVIQueryInfo.Energy_Today):
+    logger.debug('query_pvi_info({pvi_name},{pvi_info})'.format(pvi_name=pvi_name,pvi_info=pvi_info))
+    time_since = (datetime.now() + timedelta(minutes=-30)).time()
+    #time_since = datetime.combine(datetime.now().date(),time.min)
+    time_until = datetime.now().time()
+    logger.debug('query time range %s and %s' % (str(time_since),str(time_until)))
+
+    if pvi_info == PVIQueryInfo.Energy_Today:
+        queryset = RegData.objects.filter(address=INPUT_REGISTER['Today Wh'][RegCol.address.value]
+                                ).filter(pvi_name=pvi_name
+                                ).values('prob_date'
+                                ).annotate(Max('value')
+                                ).order_by('prob_date')
+        total = len(queryset)
+        if (total > 0):
+            t_date = queryset[total-1]['prob_date']
+            if t_date == datetime.now().date():
+                value = queryset[total-1].get('value__max') 
+                logger.debug('return %d' % (value * 10))
+                return (value * 10)
+        else:
+            logger.error('empty query result returned')
+            return 0
+    elif pvi_info == PVIQueryInfo.Energy_This_Month:
+        last_month_end_date = date(datetime.now().year,datetime.now().month,1) + timedelta(days=-1)
+        queryset = RegData.objects.filter(address=INPUT_REGISTER['Today Wh'][RegCol.address.value]
+                                ).filter(pvi_name=pvi_name
+                                ).filter(prob_date__gt=last_month_end_date
+                                ).values('prob_date'
+                                ).annotate(Max('value')
+                                ).order_by('prob_date')
+        value = 0
+        if len(queryset) > 0:
+            for entry in queryset:
+                value += entry.get('value__max')
+            logger.debug('return %d' % (value * 10))
+            return (value * 10)        
+        else:
+            logger.error('empty query result returned')
+            return 0
+    elif pvi_info == PVIQueryInfo.Energy_Until_Now:
+        queryset = RegData.objects.filter(address=INPUT_REGISTER['DC Life Wh'][RegCol.address.value]
+                                ).filter(pvi_name=pvi_name
+                                ).order_by('-date')
+        if len(queryset) > 0:
+            value = queryset[0].value * 10
+            logger.debug('return %d' % (value))
+            return (value)
+        else:
+            logger.error('empty query result returned')
+            return 0
+    elif pvi_info == PVIQueryInfo.AC_Output_Voltage:
+        queryset = RegData.objects.filter(address=INPUT_REGISTER['Voltage'][RegCol.address.value]
+                                ).filter(pvi_name=pvi_name
+                                ).filter(prob_date__exact=datetime.now().date()
+                                ).filter(prob_time__range=[time_since,time_until]
+                                ).order_by('-date')
+        if len(queryset) > 0:
+            value = round(queryset[0].value * 0.1,1)
+            logger.debug('return %d' % (value))
+            return (value)
+        else:
+            logger.error('empty query result returned')
+    elif pvi_info == PVIQueryInfo.AC_Output_Current:
+        queryset = RegData.objects.filter(address=INPUT_REGISTER['Current'][RegCol.address.value]
+                                ).filter(pvi_name=pvi_name
+                                ).filter(prob_date__exact=datetime.now().date()
+                                ).filter(prob_time__range=[time_since,time_until]
+                                ).order_by('-date')
+        if len(queryset) > 0:
+            value = round(queryset[0].value * 0.01,2)
+            logger.debug('return %d' % (value))
+            return (value)
+        else:
+            logger.error('empty query result returned')
+    elif pvi_info == PVIQueryInfo.AC_Output_Wattage:
+        queryset = RegData.objects.filter(address=INPUT_REGISTER['Wattage'][RegCol.address.value]
+                                ).filter(pvi_name=pvi_name
+                                ).filter(prob_date__exact=datetime.now().date()
+                                ).filter(prob_time__range=[time_since,time_until]
+                                ).order_by('-date')
+        if len(queryset) > 0:
+            value = queryset[0].value
+            logger.debug('return %d' % (value))
+            return (value)
+        else:
+            logger.error('empty query result returned')
+    else:
+        logger.error('unknow query pvi_info %s' % pvi_info)
 
 if __name__ == '__main__':
     while True:

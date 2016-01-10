@@ -172,12 +172,17 @@ LOGGING = {
         'level': 'DEBUG'
     },
     'loggers': {
-        'pvi.h5.controller': {
+        'pvi.h5': {
             'handlers': ['console','default'],
             'level': 'DEBUG',
             'propagate': False
         },
-        'accuweather.models': {
+        'accuweather': {
+            'handlers': ['console','default'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
+        'pvappengine': {
             'handlers': ['console','default'],
             'level': 'DEBUG',
             'propagate': False

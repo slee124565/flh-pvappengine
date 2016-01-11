@@ -76,7 +76,12 @@ def add_environment_condition_into_pvs_meta():
     pvs_meta['environment']['visibility'] = env_conditions[CurrConditionType.Visibility]
 
 def query_pvs_meta(request,pvi_name=None):
+    pvs_meta['pvs_static']['today']['total_eng_kwh'] = 0
+    pvs_meta['pvs_static']['this_month']['total_eng_kwh'] = 0
+    pvs_meta['pvs_static']['until_now']['total_eng_kwh'] = 0
+    
     if pvi_name is None:
+        # TODO: need to verify for multiple pvi pvstation
         logger.info('query_pvs_meta for all pvi')
         for name in pvi_list:
             add_pvi_info_into_pvs_meta(name)
@@ -106,7 +111,7 @@ def query_pvs_meta(request,pvi_name=None):
                                                     * pvs_meta['pvs_static']['until_now']['total_eng_kwh'],
                                                     4)
 
-    logger.info('pvs_meta:\n%s' %  str(pvs_meta))
+    logger.info('pvs_meta: %s' %  str(pvs_meta))
     return HttpResponse(json.dumps(pvs_meta))
         
         

@@ -34,13 +34,21 @@ class CurrConditions(models.Model):
         api_uri = AccuWeather_API.format(locationKey=current_location_key,
                                          apikey=API_KEY)
         logger.debug('api_url: ' + api_uri)
-        with urllib.request.urlopen(api_uri) as http_resp:
-            curr_weather = json.loads(http_resp.read().decode('utf-8'))
-            db_entry = CurrConditions(
-                                   temperature = float(curr_weather[0]['ApparentTemperature']['Metric']['Value']),
-                                   uv = int(curr_weather[0]['UVIndex']),
-                                   visibility = float(curr_weather[0]['Visibility']['Metric']['Value'])
-                                   )
-            db_entry.save()
-            logger.info('save pvstion current condition: %s' % str(db_entry) )
+        try:
+            with urllib.request.urlopen(api_uri) as http_resp:
+                curr_weather = json.loads(http_resp.read().decode('utf-8'))
+                t_temperature = curr_weather[0]['ApparentTemperature']['Metric']['Value']
+                t_uv = curr_weather[0]['UVIndex']
+                t_visibility = curr_weather[0]['Visibility']['Metric']['Value']
+                db_entry = CurrConditions(
+                                          prob_hour = datetime.now().hour,
+                                          temperature = float(t_temperature),
+                                          uv = int(t_uv),
+                                          visibility = float(t_visibility)
+                                          )
+                logger.debug('current condition: %s, %s, %s' % (t_temperature,t_uv,t_visibility))
+                db_entry.save()
+                logger.info('save pvstion current condition: %s' % str(db_entry) )
+        except Exception as e:
+            logger.error('save_current_location_condition error', exc_info=True)
             

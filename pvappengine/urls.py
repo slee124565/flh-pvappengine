@@ -26,7 +26,10 @@ urlpatterns = [
     url(r'^pvi/', include('pvi.urls')),
     
     url(r'^appeng/pvs_meta/$', appeng_http_api.query_pvs_meta  ),
-    url(r'^appeng/pvs_meta/(?P<pvi_name>\w+)$', appeng_http_api.query_pvs_meta  ),
+    url(r'^appeng/pvs_meta/(?P<pvi_name>\w+)/$', appeng_http_api.query_pvs_meta  ),
     
+    url(r'^appeng/amchart/$', appeng_http_api.query_chart_data  ),
+    url(r'^appeng/amchart/(?P<pvi_name>\w+)/$', appeng_http_api.query_chart_data  ),
+    url(r'^appeng/amchart/(?P<pvi_name>\w+)/(?P<period_type>\w+)/$', appeng_http_api.query_chart_data  ),
 
 ]

@@ -3,7 +3,7 @@ from pvi.h5 import *
 from pvi.models import RegData
 from django.db.models import Max
 from datetime import datetime, date, time, timedelta
-from pvi import PVIQueryInfo
+from pvi import *
 
 import logging, sys
 logger = logging.getLogger(__name__)
@@ -160,7 +160,56 @@ def get_polling_input_register_value():
         info.append([reg_name,reg_value])
     return info
 
+def pvi_query_info_energy_hourly_list():
+    '''
+    provide function for query_pvi_info on PVIQueryInfo.Energy_Hourly_List
+    '''
+    queryset = RegData.objects.filter(address=INPUT_REGISTER['Today Wh'][RegCol.address.value]
+                            ).values( 'prob_date', 'prob_hour'
+                            ).annotate(Max('value')
+                            ).order_by('-prob_date','-prob_hour')
+    logger.debug('sql cmd: %s' % str(queryset.query))
+    info = []
+    logger.debug('queryset count %d' % queryset.count())
+    max_report_len = MAX_QUERY_ENERGY_HOURLY_LIST_LEN # last 48 hours
+    if queryset.count() < max_report_len:
+        max_report_len = queryset.count()
+    for entry in queryset[:max_report_len]:
+        #logger.debug(entry['prob_date'])
+        #logger.debug(entry['prob_hour'])
+        t_hour = entry['prob_hour']
+        t_time = time(t_hour,0,0)
+        #logger.debug(str(t_time))
+        info.append([datetime.combine(entry['prob_date'],t_time),entry['value__max']])
+    logger.debug('query return:\n%s' % str(info))
+
+    info = [[entry[0],entry[1]*10] for entry in info]
+    return info
+
+def pvi_query_info_energy_daily_list():
+    '''
+    provide function for query_pvi_info on PVIQueryInfo.Energy_Daily_List
+    '''
+    queryset = RegData.objects.filter(address=INPUT_REGISTER['Today Wh'][RegCol.address.value]
+                                        ).values('prob_date'
+                                        ).annotate(Max('value')
+                                        ).order_by('-prob_date')
+    info = []
+    max_report_len = MAX_QUERY_ENERGY_DAILY_LIST_LEN #days
+    if queryset.count() < max_report_len:
+        max_report_len = queryset.count()
+    for entry in queryset[:max_report_len]:
+        info.append([entry['prob_date'],entry['value__max']])
+    logger.debug('query return:\n%s' % str(info))
+    info.sort(key=lambda x: x[0])
+    
+    info = [[entry[0],entry[1]*10] for entry in info]
+    return info
+        
 def query_pvi_info(pvi_name,pvi_info=PVIQueryInfo.Energy_Today):
+    '''
+    all pv inverter type should implement this function for all PVIQueryInfo
+    '''
     logger.debug('query_pvi_info({pvi_name},{pvi_info})'.format(pvi_name=pvi_name,pvi_info=pvi_info))
     time_since = (datetime.now() + timedelta(minutes=-30)).time()
     #time_since = datetime.combine(datetime.now().date(),time.min)
@@ -211,6 +260,12 @@ def query_pvi_info(pvi_name,pvi_info=PVIQueryInfo.Energy_Today):
         else:
             logger.error('empty query result returned')
             return 0
+    elif pvi_info == PVIQueryInfo.Energy_Hourly_List:
+        return pvi_query_info_energy_hourly_list()
+    
+    elif pvi_info == PVIQueryInfo.Energy_Daily_List:
+        return pvi_query_info_energy_daily_list()
+    
     elif pvi_info == PVIQueryInfo.AC_Output_Voltage:
         queryset = RegData.objects.filter(address=INPUT_REGISTER['Voltage'][RegCol.address.value]
                                 ).filter(pvi_name=pvi_name

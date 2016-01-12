@@ -22,7 +22,7 @@ def query(request,pvi_name='H5',period_type='daily',info_name='energy'):
                                       "date": entry[0].strftime('%Y-%m-%d %H:%M:%S'),
                                       "energy": entry[1]
                                       })
-                return HttpResponse(json.dumps(resp_json))
+                return HttpResponse(json.dumps(resp_json,indent=4))
             else:
                 return HttpResponse('ValueType Error PVI Name %s Error' % pvi_name)
         else:

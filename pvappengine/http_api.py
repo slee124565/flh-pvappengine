@@ -44,14 +44,17 @@ pvs_meta = {
                             },
             }
 def add_pvi_info_into_pvs_meta(pvi_name):
-    pvs_meta['pvs_static']['today']['total_eng_kwh'] += round(0.001 * query_pvi_info(pvi_name, 
-                                                                  query_info=PVIQueryInfo.Energy_Today),3)
+    t_value = query_pvi_info(pvi_name,query_info=PVIQueryInfo.Energy_Today)
+    if not t_value is None:
+        pvs_meta['pvs_static']['today']['total_eng_kwh'] += round(0.001 * t_value, 3)
     
-    pvs_meta['pvs_static']['this_month']['total_eng_kwh'] += round(0.001 * query_pvi_info(pvi_name, 
-                                                                  query_info=PVIQueryInfo.Energy_This_Month),3)
+    t_value = query_pvi_info(pvi_name,query_info=PVIQueryInfo.Energy_This_Month)
+    if not t_value is None:
+        pvs_meta['pvs_static']['this_month']['total_eng_kwh'] += round(0.001 * t_value, 3)
 
-    pvs_meta['pvs_static']['until_now']['total_eng_kwh'] += round(0.001 * query_pvi_info(pvi_name, 
-                                                                  query_info=PVIQueryInfo.Energy_Until_Now),3)
+    t_value = query_pvi_info(pvi_name,query_info=PVIQueryInfo.Energy_Until_Now)
+    if not t_value is None:
+        pvs_meta['pvs_static']['until_now']['total_eng_kwh'] += round(0.001 * t_value, 3)
     
     if not pvi_name in pvs_meta['dc_output'].keys():
         pvs_meta['dc_output'][pvi_name] = {

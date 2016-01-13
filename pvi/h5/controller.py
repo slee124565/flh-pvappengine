@@ -192,7 +192,21 @@ def pvi_query_info_energy_hourly_list():
             for i in range(len(dataset)-2) 
             if dataset[i][0].date() == dataset[i+1][0].date()]
     info.reverse()
-    return info
+    
+    #-> insert zero energy value for missing hour
+    dataset = []
+    dataset.append(info[0])
+    t_date = info[0][0]
+    i = 1
+    while i < len(info):
+        t_date = t_date + timedelta(hours=+1)
+        if t_date < info[i][0]:
+            dataset.append([t_date,0])
+        else:
+            dataset.append(info[i])
+            i += 1        
+    dataset.sort(key = lambda x: x[0])
+    return dataset
 
 def pvi_query_info_energy_daily_list():
     '''

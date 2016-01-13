@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from enum import Enum
 
-from pvappengine import PVSChartsDataTypeEnum
+from pvappengine import *
 from pvi.views import query_pvi_info
 from pvi import PVIQueryInfo
 import accuweather.views as accuweather_api
@@ -123,30 +123,35 @@ def query_pvs_meta(request,pvi_name=None):
     logger.info('pvs_meta: %s' %  str(pvs_meta))
     return HttpResponse(json.dumps(pvs_meta))
 
-def query_chart_data(request,pvi_name='',data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_ENERGY_n_VISIBILITY):
+def query_chart_data(request,data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_ENERGY_n_VISIBILITY.value):
     '''
     Web Application API
     provide page chart display data
-    [pvi_name == None or pvi_name == ''] means query for all pv inverter (pv station)
+    current supported chart data type:
+        PVS_AMCHARTS_DAILY_ENERGY_n_VISIBILITY
+        PVS_AMCHARTS_HOURLY_ENERGY_n_VISIBILITY
     '''
-    logger.info('query_chart_data(request,{pvi_name},{data_type})'.format(pvi_name = pvi_name,
-                                                                          data_type = data_type))
+    logger.info('query_chart_data(request,{data_type})'.format(data_type = data_type))
+    try:
+        data_type = int(data_type)
+    except:
+        logger.warning('unknow param data_type {data_type}.'.format(data_type=data_type))
+        return HttpResponse('')
+    
     #-> add energy value
-    if data_type == PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_ENERGY_n_VISIBILITY:
+    if data_type == PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_ENERGY_n_VISIBILITY.value:
         pvi_query_info_type = PVIQueryInfo.Energy_Daily_List
-    elif data_type == PVSChartsDataTypeEnum.PVS_AMCHARTS_HOURLY_ENERGY_n_VISIBILITY:
+    elif data_type == PVSChartsDataTypeEnum.PVS_AMCHARTS_HOURLY_ENERGY_n_VISIBILITY.value:
         pvi_query_info_type = PVIQueryInfo.Energy_Hourly_List
+    else:
+        logger.warning('unknow param data_type {data_type}.'.format(data_type=data_type))
+        return HttpResponse('')
         
     pvi_dataset = {}
-    if pvi_name is None or pvi_name == '':
-        logger.info('query_for_amchart for pvi %s chart %s data' % (data_type,str(pvi_list)))
-        for name in pvi_list:
-            dataset = query_pvi_info(name, pvi_query_info_type)
-            pvi_dataset[name] = dataset
-    else:
-        logger.info('query_for_amchart for pvi %s chart %s data' % (pvi_name,data_type))
-        dataset = query_pvi_info(pvi_name, pvi_query_info_type)
-        pvi_dataset[pvi_name] = dataset
+    logger.info('query_for_amchart for pvi %d chart %s data' % (data_type,str(pvi_list)))
+    for name in pvi_list:
+        dataset = query_pvi_info(name, pvi_query_info_type)
+        pvi_dataset[name] = dataset
     
     data_resp = {} #-> datetime as key
     '''
@@ -159,9 +164,9 @@ def query_chart_data(request,pvi_name='',data_type=PVSChartsDataTypeEnum.PVS_AMC
                     }
     }
     '''
-    if data_type == PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_ENERGY_n_VISIBILITY:
+    if data_type == PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_ENERGY_n_VISIBILITY.value:
         t_key_format = '%Y-%m-%d'
-    elif data_type == PVSChartsDataTypeEnum.PVS_AMCHARTS_HOURLY_ENERGY_n_VISIBILITY:
+    elif data_type == PVSChartsDataTypeEnum.PVS_AMCHARTS_HOURLY_ENERGY_n_VISIBILITY.value:
         t_key_format = '%Y-%m-%d %H:00:00'
 
     for name, dataset in pvi_dataset.items():
@@ -178,10 +183,13 @@ def query_chart_data(request,pvi_name='',data_type=PVSChartsDataTypeEnum.PVS_AMC
                                     'visibility' : 'N/A',
                                     }
     #-> add visibility
-    if data_type == PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_ENERGY_n_VISIBILITY:
+    if data_type == PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_ENERGY_n_VISIBILITY.value:
         env_dataset = accuweather_api.query_daily_condition(CurrConditionType.Visibility)
-    elif data_type == PVSChartsDataTypeEnum.PVS_AMCHARTS_HOURLY_ENERGY_n_VISIBILITY:
+    elif data_type == PVSChartsDataTypeEnum.PVS_AMCHARTS_HOURLY_ENERGY_n_VISIBILITY.value:
         env_dataset = accuweather_api.query_hourly_condition(CurrConditionType.Visibility)
+    else:
+        env_dataset = []
+        logger.error('unknow param data_type {data_type}.'.format(data_type=data_type))
         
     for entry in env_dataset:
         t_datetime = entry[0]
@@ -200,6 +208,7 @@ def query_chart_data(request,pvi_name='',data_type=PVSChartsDataTypeEnum.PVS_AMC
     date_list = list(data_resp.keys())
     date_list.sort(key = lambda x : x)
     resp_content = [data_resp[t_date] for t_date in date_list]
+    
     return HttpResponse(json.dumps(resp_content,indent=4))
         
 

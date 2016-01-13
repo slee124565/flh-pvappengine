@@ -171,7 +171,7 @@ def pvi_query_info_energy_hourly_list():
     logger.debug('sql cmd: %s' % str(queryset.query))
     info = []
     logger.debug('queryset count %d' % queryset.count())
-    max_report_len = MAX_QUERY_ENERGY_HOURLY_LIST_LEN # last 48 hours
+    max_report_len = MAX_QUERY_ENERGY_HOURLY_LIST_LEN + 1 # last 48 hours
     if queryset.count() < max_report_len:
         max_report_len = queryset.count()
     for entry in queryset[:max_report_len]:
@@ -182,8 +182,16 @@ def pvi_query_info_energy_hourly_list():
         #logger.debug(str(t_time))
         info.append([datetime.combine(entry['prob_date'],t_time),entry['value__max']])
     logger.debug('query return:\n%s' % str(info))
+    info.sort(key=lambda x: x[0])
 
     info = [[entry[0],entry[1]*10] for entry in info]
+    
+    info.reverse()
+    dataset = info
+    info = [[dataset[i][0],dataset[i][1]-dataset[i+1][1]] 
+            for i in range(len(dataset)-2) 
+            if dataset[i][0].date() == dataset[i+1][0].date()]
+    info.reverse()
     return info
 
 def pvi_query_info_energy_daily_list():

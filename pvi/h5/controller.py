@@ -19,7 +19,7 @@ t_serial_port = t_pvs_config['serial']['port']
 t_modbus_id = t_pvs_config['modbus_id']
 t_pvs_name = t_pvs_config['name']
 t_pvs_type = t_pvs_config['type']
-logger.info('pvs[0] meta: {pvs_meta}'.format(str(t_pvs_config)))
+logger.info('pvs[0] meta: {pvs_meta}'.format(pvs_meta=str(t_pvs_config)))
 
 import minimalmodbus, os
 if os.path.exists(t_serial_port):

@@ -4,7 +4,7 @@ from enum import Enum
 
 from pvappengine import *
 from pvi.views import query_pvi_info
-from pvi import PVIQueryInfo
+from pvi import *
 import accuweather.views as accuweather_api
 from accuweather import CurrConditionType
 
@@ -48,19 +48,28 @@ def get_pvi_list_from_settings():
     '''
     return [entry['name'] for entry in settings.PVS_CONFIG['pvs']]
 
-def add_pvi_info_into_pvs_meta(pvi_name):
+def get_pvi_type(pvi_name):
+    '''
+    string mapping for element in PVI_TYPE_LIST to PVIType
+    '''
+    for entry in settings.PVS_CONFIG['pvs']:
+        if entry['name'] == pvi_name:
+            if entry['type'] == PVI_TYPE_DELTA_PRI_H5:
+                return PVIType.Delta_PRI_H5
+    
+def add_pvi_info_into_pvs_meta(pvi_name, pvi_type):
     '''
     return all pvi information according to pvs_meta template
     '''
-    t_value = query_pvi_info(pvi_name,query_info=PVIQueryInfo.Energy_Today)
+    t_value = query_pvi_info(pvi_name, pvi_type, PVIQueryInfo.Energy_Today)
     if not t_value is None:
         pvs_meta['pvs_static']['today']['total_eng_kwh'] += round(0.001 * t_value, 3)
     
-    t_value = query_pvi_info(pvi_name,query_info=PVIQueryInfo.Energy_This_Month)
+    t_value = query_pvi_info(pvi_name, pvi_type, PVIQueryInfo.Energy_This_Month)
     if not t_value is None:
         pvs_meta['pvs_static']['this_month']['total_eng_kwh'] += round(0.001 * t_value, 3)
 
-    t_value = query_pvi_info(pvi_name,query_info=PVIQueryInfo.Energy_Until_Now)
+    t_value = query_pvi_info(pvi_name, pvi_type, PVIQueryInfo.Energy_Until_Now)
     if not t_value is None:
         pvs_meta['pvs_static']['until_now']['total_eng_kwh'] += round(0.001 * t_value, 3)
     
@@ -70,15 +79,15 @@ def add_pvi_info_into_pvs_meta(pvi_name):
                                            'current': 'N/A',
                                            'wattage': 'N/A',
                                            }
-    voltage = query_pvi_info(pvi_name,query_info=PVIQueryInfo.AC_Output_Voltage)
+    voltage = query_pvi_info(pvi_name, pvi_type, PVIQueryInfo.AC_Output_Voltage)
     if not (voltage is None):
         pvs_meta['dc_output'][pvi_name]['voltage'] = round(voltage,1)
 
-    current = query_pvi_info(pvi_name,query_info=PVIQueryInfo.AC_Output_Current)
+    current = query_pvi_info(pvi_name, pvi_type, PVIQueryInfo.AC_Output_Current)
     if not (current is None):
         pvs_meta['dc_output'][pvi_name]['current'] = round(current,2)
 
-    wattage = query_pvi_info(pvi_name,query_info=PVIQueryInfo.AC_Output_Wattage)
+    wattage = query_pvi_info(pvi_name, pvi_type, PVIQueryInfo.AC_Output_Wattage)
     if not (wattage is None):
         pvs_meta['dc_output'][pvi_name]['wattage'] = wattage
 
@@ -105,10 +114,12 @@ def query_pvs_meta(request,pvi_name=None):
         # TODO: need to verify for multiple pvi pvstation
         logger.info('query_pvs_meta for all pvi')
         for name in pvi_list:
-            add_pvi_info_into_pvs_meta(name)
+            pvi_type = get_pvi_type(pvi_name)
+            add_pvi_info_into_pvs_meta(name,pvi_type)
     else:
         logger.info('query_pvs_meta for pvi %s' % pvi_name)
-        add_pvi_info_into_pvs_meta(pvi_name)
+        pvi_type = get_pvi_type(pvi_name)
+        add_pvi_info_into_pvs_meta(pvi_name,pvi_type)
         
     add_environment_condition_into_pvs_meta()
     pvs_meta['pvs_static']['today']['total_carbon_save'] = round(kWh_carbon_save_unit_kg 
@@ -163,7 +174,8 @@ def query_chart_data(request,data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_
     pvi_list = get_pvi_list_from_settings()
     logger.info('query_for_amchart for pvi %d chart %s data' % (data_type,str(pvi_list)))
     for name in pvi_list:
-        dataset = query_pvi_info(name, pvi_query_info_type)
+        pvi_type = get_pvi_type(name)
+        dataset = query_pvi_info(name, pvi_type, pvi_query_info_type)
         pvi_dataset[name] = dataset
     
     data_resp = {} #-> datetime as key

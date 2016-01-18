@@ -8,16 +8,18 @@ PVI_TYPE_LIST = [
                  PVI_TYPE_DELTA_PRI_H5,
                  ]
 
+class PVIType(Enum):
+    '''
+    enum type for each PVI implemented by this package
+    and pvi type string mapping function is http_api.get_pvi_type()
+    '''
+    Delta_PRI_H5 = 1
+    
+
 # energy info query return length for each pvi driver to implement
 MAX_QUERY_ENERGY_DAILY_LIST_LEN = 45
 MAX_QUERY_ENERGY_HOURLY_LIST_LEN = 48
 
-class PVIType(Enum):
-    '''
-    enum type for each PVI implemented by this package
-    '''
-    Delta_PRI_H5 = 1
-    
 class PVIQueryInfo(Enum):
     '''
     Enum class type

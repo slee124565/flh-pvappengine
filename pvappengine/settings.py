@@ -214,6 +214,7 @@ PVS_CONFIG = {
                        ],
               'kWh_carbon_save_unit_kg': 0.637,
               'kWh_income_unit_ntd': 6.8633,
+              'accuweather_location_key': '3-315078_1_AL', #AccuWeather Taipei Location Key
               }
 
 

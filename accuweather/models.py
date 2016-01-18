@@ -30,9 +30,13 @@ class CurrConditions(models.Model):
                          str(self.sync_flag)])
     
     @classmethod
-    def save_current_location_condition(cls):
-        api_uri = AccuWeather_API.format(locationKey=current_location_key,
-                                         apikey=API_KEY)
+    def save_current_location_condition(cls, location_key):
+        '''
+        fetch location weather information from AccuWeather web server
+        and save into database
+        '''
+        api_uri = AccuWeather_API.format(locationKey = location_key,
+                                         apikey = API_KEY)
         logger.debug('api_url: ' + api_uri)
         try:
             with urllib.request.urlopen(api_uri) as http_resp:

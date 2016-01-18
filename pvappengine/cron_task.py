@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from django.conf import settings
 import os, sys, django
 
 if sys.platform == 'win32':
@@ -16,6 +17,6 @@ from pvi.h5 import controller as h5_controller
 h5_controller.save_all_pvi_input_register_value()
 
 from accuweather.models import CurrConditions
-CurrConditions.save_current_location_condition()
+CurrConditions.save_current_location_condition(settings.PVS_CONFIG['accuweather_location_key'])
 
 

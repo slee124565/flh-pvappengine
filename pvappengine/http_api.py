@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.conf import settings
 from enum import Enum
 
 from pvappengine import *
@@ -7,7 +8,7 @@ from pvi import PVIQueryInfo
 import accuweather.views as accuweather_api
 from accuweather import CurrConditionType
 
-import logging, json, settings
+import logging, json
 logger = logging.getLogger(__name__)
 
 kWh_carbon_save_unit_kg = settings.PVS_CONFIG['kWh_carbon_save_unit_kg']

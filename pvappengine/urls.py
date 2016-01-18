@@ -22,8 +22,6 @@ from pvappengine import http_api as appeng_http_api
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
-    url(r'^pvi/', include('pvi.urls')),
-    
     url(r'^appeng/pvs_meta/$', appeng_http_api.query_pvs_meta  ),
     url(r'^appeng/pvs_meta/(?P<pvi_name>\w+)/$', appeng_http_api.query_pvs_meta  ),
     

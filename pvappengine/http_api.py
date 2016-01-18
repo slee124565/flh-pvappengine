@@ -7,14 +7,11 @@ from pvi import PVIQueryInfo
 import accuweather.views as accuweather_api
 from accuweather import CurrConditionType
 
-import logging, json
+import logging, json, settings
 logger = logging.getLogger(__name__)
 
-#-> TODO: get pvi name list from database or django settings
-pvi_list = ['H5']
-kWh_carbon_save_unit_kg = 0.637
-#TODO: kWh_income_unit_ntd should be configurable by user
-kWh_income_unit_ntd = 6.8633
+kWh_carbon_save_unit_kg = settings.PVS_CONFIG['kWh_carbon_save_unit_kg']
+kWh_income_unit_ntd = settings.PVS_CONFIG['kWh_income_unit_ntd']
 
 
 pvs_meta = {
@@ -43,7 +40,17 @@ pvs_meta = {
                             'visibility':0,
                             },
             }
+
+def get_pvi_list_from_settings():
+    '''
+    return list of pvi name according to settings module's PVS_CONFIG
+    '''
+    return [entry['name'] for entry in settings.PVS_CONFIG['pvs']]
+
 def add_pvi_info_into_pvs_meta(pvi_name):
+    '''
+    return all pvi information according to pvs_meta template
+    '''
     t_value = query_pvi_info(pvi_name,query_info=PVIQueryInfo.Energy_Today)
     if not t_value is None:
         pvs_meta['pvs_static']['today']['total_eng_kwh'] += round(0.001 * t_value, 3)
@@ -75,6 +82,9 @@ def add_pvi_info_into_pvs_meta(pvi_name):
         pvs_meta['dc_output'][pvi_name]['wattage'] = wattage
 
 def add_environment_condition_into_pvs_meta():
+    '''
+    add environment's uv_index, temperature and visibility into pvs_meta template
+    '''
     env_conditions = accuweather_api.get_current_conditions()
     pvs_meta['environment']['uv_index'] = env_conditions[CurrConditionType.UV_Index]
     pvs_meta['environment']['temperature'] = env_conditions[CurrConditionType.Temperature]
@@ -89,6 +99,7 @@ def query_pvs_meta(request,pvi_name=None):
     pvs_meta['pvs_static']['this_month']['total_eng_kwh'] = 0
     pvs_meta['pvs_static']['until_now']['total_eng_kwh'] = 0
     
+    pvi_list = get_pvi_list_from_settings()
     if pvi_name is None:
         # TODO: need to verify for multiple pvi pvstation
         logger.info('query_pvs_meta for all pvi')
@@ -148,6 +159,7 @@ def query_chart_data(request,data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_
         return HttpResponse('')
         
     pvi_dataset = {}
+    pvi_list = get_pvi_list_from_settings()
     logger.info('query_for_amchart for pvi %d chart %s data' % (data_type,str(pvi_list)))
     for name in pvi_list:
         dataset = query_pvi_info(name, pvi_query_info_type)

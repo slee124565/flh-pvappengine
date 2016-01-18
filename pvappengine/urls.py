@@ -17,7 +17,6 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from pvi import http_api as pvi_http_api
 from pvappengine import http_api as appeng_http_api
 
 urlpatterns = [

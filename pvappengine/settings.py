@@ -212,4 +212,8 @@ PVS_CONFIG = {
                                    }
                         },
                        ],
+              'kWh_carbon_save_unit_kg': 0.637,
+              'kWh_income_unit_ntd': 6.8633,
               }
+
+

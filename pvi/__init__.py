@@ -4,6 +4,9 @@ from enum import Enum
 # constant string for each PVI implemented by this package
 PVI_TYPE_DELTA_PRI_H5 = 'DELTA_PRI_H5'
 PVI_TYPE_GROWATTA_PRI = 'GROWATTA' # TODO: not yet implement
+PVI_TYPE_LIST = [
+                 PVI_TYPE_DELTA_PRI_H5,
+                 ]
 
 # energy info query return length for each pvi driver to implement
 MAX_QUERY_ENERGY_DAILY_LIST_LEN = 45

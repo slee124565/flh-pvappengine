@@ -1,13 +1,17 @@
 from enum import Enum
 
-MODBUS_ID = 2
-PVI_NAME = 'H5'
-
 class RegCol(Enum):
+    '''
+    This enum define the list index name in HOLDING_REGISTER & INPUT_REGISTER items
+    '''
     address = 0
     name = 1
     length = 2
 
+'''
+DELTA PRI H5 Holding Register address and word length
+item list index according to RegCol 
+'''
 HOLDING_REGISTER = {
     "Measurement Index": [
         "800",
@@ -21,6 +25,10 @@ HOLDING_REGISTER = {
     ]
 }
 
+'''
+DELTA PRI H5 Input Register address and word length
+item list index according to RegCol 
+'''
 INPUT_REGISTER = {
     "Delta 5K:Solar 1 RLeakageAvg": [
         "1163",

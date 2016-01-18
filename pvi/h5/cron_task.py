@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+#
+# (deprecated)
+# designed for linux cron schedule 
+# to activate pvi.h5.controller.save_all_pvi_input_register_value() function
+# 
 
 import os, sys, django
 

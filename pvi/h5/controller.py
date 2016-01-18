@@ -13,11 +13,22 @@ logger = logging.getLogger(__name__)
 #handler.setFormatter(formatter)
 #logger.addHandler(handler)
 
+from django.conf import settings
+t_pvs_config = settings.PVS_CONFIG['pvs'][0]
+t_serial_port = t_pvs_config['serial']['port']
+t_modbus_id = t_pvs_config['modbus_id']
+t_pvs_name = t_pvs_config['name']
+t_pvs_type = t_pvs_config['type']
+logger.info('pvs[0] meta: {pvs_meta}'.format(str(t_pvs_config)))
+
 import minimalmodbus, os
-if os.path.exists('/dev/ttyUSB0'):
-    instr = minimalmodbus.Instrument('/dev/ttyUSB0',2)    
-    instr.serial.baudrate = 9600    
-    instr.serial.timeout = 0.1
+if os.path.exists(t_serial_port):
+    instr = minimalmodbus.Instrument(t_serial_port,t_modbus_id)    
+    instr.serial.baudrate = t_pvs_config['serial']['baudrate']
+    instr.serial.bytesize = t_pvs_config['serial']['bytesize']
+    instr.serial.parity = t_pvs_config['serial']['parity']
+    instr.serial.stopbits = t_pvs_config['serial']['stopbits']    
+    instr.serial.timeout = t_pvs_config['serial']['timeout']
     instr.debug=True
 else:
     logger.warning('pvi connection is not exist! enter simulation mode')
@@ -44,6 +55,9 @@ Register_Polling_List = [
                     ]
 
 def modbus_input_register_read(reg_addr):
+    '''
+    read Input Register value (2 bytes)
+    '''
     try:
         val = instr.read_register(int(reg_addr)-1,functioncode=4)
         return val
@@ -51,6 +65,9 @@ def modbus_input_register_read(reg_addr):
         logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
 
 def get_register_value_by_name(reg_name):
+    '''
+    read Input Register value according to it length (2 or 4 bytes) with word order
+    '''
     reg_entry = INPUT_REGISTER.get(reg_name)
     if reg_entry:
         reg_addr = reg_entry[0]
@@ -68,7 +85,7 @@ def get_register_value_by_name(reg_name):
             else:
                 raise Exception('register length ' + str(reg_len) + ' not implement!')
         except TypeError as err:
-            logger.warning('read register ' + reg_name + ' value fail.')
+            logger.warning('read register ' + reg_name + ' value fail.', exc_info=True)
             return None
     else:
         raise Exception('register name ' + reg_name + ' not know!')
@@ -76,6 +93,9 @@ def get_register_value_by_name(reg_name):
     return reg_value
 
 def save_all_pvi_input_register_value():
+    '''
+    save all Input Register in Register_Polling_List into database
+    '''
     read_log = []
     logger.debug('='*20)
     for reg_name in Register_Polling_List:
@@ -92,8 +112,8 @@ def save_all_pvi_input_register_value():
                     count += 1
                     
                 if not reg_value is None:
-                    reg_data = RegData(modbus_id=MODBUS_ID,
-                                pvi_name=PVI_NAME,
+                    reg_data = RegData(modbus_id=t_modbus_id,
+                                pvi_name=t_pvs_name,
                                 #date = datetime.datetime.now(),
                                 address = reg_addr,
                                 value = float(reg_value),
@@ -110,6 +130,9 @@ def save_all_pvi_input_register_value():
     logger.info('dump: '+str(read_log))
 
 def get_pvi_energy_info_json(period_type='daily'):
+    '''
+    return pvi daily or hourly energy information in json format
+    '''
     register_name = 'Today Wh'
     register_address = INPUT_REGISTER.get(register_name)[RegCol.address.value]
     logger.debug('get_pvi_energy_info_json with period_type %s' % period_type)
@@ -154,6 +177,9 @@ def get_pvi_energy_info_json(period_type='daily'):
     return info
 
 def get_polling_input_register_value():
+    '''
+    return a list [(reg_name,reg_value)...] of Register_Polling_List
+    '''
     info = []
     for reg_name in Register_Polling_List:
         reg_value = get_register_value_by_name(reg_name)

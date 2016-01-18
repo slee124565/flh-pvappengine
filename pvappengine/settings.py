@@ -195,3 +195,21 @@ LOGGING = {
     }
 }
 
+import serial
+PVS_CONFIG = {
+              'pvs' : [
+                       {
+                        'name': 'H5',
+                        'type': 'DELTA_PRI_H5', 
+                        'modbus_id': 2,
+                        'serial': {
+                                   'port': '/dev/ttyUSB0',
+                                   'baudrate': 9600,
+                                   'bytesize': 8,
+                                   'parity': serial.PARITY_NONE,
+                                   'stopbits': 1,
+                                   'timeout': 0.1,
+                                   }
+                        },
+                       ],
+              }

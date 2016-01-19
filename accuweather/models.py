@@ -1,11 +1,10 @@
 from django.db import models
+from django.conf import settings
 from datetime import datetime
 from accuweather import *
 import urllib.request, json, logging
 
 logger = logging.getLogger(__name__)
-
-current_location_key = LocationKey_Taipei
 
 class CurrConditions(models.Model):
     prob_date = models.DateField(default=datetime.now)
@@ -36,7 +35,7 @@ class CurrConditions(models.Model):
         and save into database
         '''
         api_uri = AccuWeather_API.format(locationKey = location_key,
-                                         apikey = API_KEY)
+                                         apikey = settings.PVS_CONFIG['accuweather']['apikey'])
         logger.debug('api_url: ' + api_uri)
         try:
             with urllib.request.urlopen(api_uri) as http_resp:

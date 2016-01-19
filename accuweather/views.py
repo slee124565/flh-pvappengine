@@ -119,6 +119,25 @@ def aw_search_location_by_geo(latitude,longitude):
         logger.error('aw_search_location_by_geo error', exc_info=True)
     return info
 
+def aw_locations_api(location_key):
+    '''
+    AccuWeather Location API
+    return json data
+    '''
+    info = {}
+    t_apikey = settings.PVS_CONFIG['accuweather']['apikey']
+    t_url = AccuWeather_Location_API.format(locationkey=location_key,
+                                            apikey=t_apikey)
+    try:
+        logger.debug(t_url)
+        with urllib.request.urlopen(t_url) as http_resp:
+            info = json.loads(http_resp.read().decode('utf-8'))
+            logger.debug(str(info))
+    except:
+        logger.error('aw_locations_api error', exc_info=True)
+    return info
+    
+    
 def accuweather_geo_location_search(request):
     '''
     web api for querying location by GeoPosition
@@ -143,9 +162,17 @@ def accuweather_location_key_geo_search(request):
     try:
         latitude,longitude = request.GET.get('q').split(',')
         resp = HttpResponse(content_type='text/plain')
-        resp.content = 'AccuWeather Location Key: ' + aw_search_location_by_geo(latitude,longitude).get('Key')
+        location_key = aw_search_location_by_geo(latitude,longitude).get('Key')
+        location_data = aw_locations_api(location_key)
+        resp.content = 'AccuWeather Location Key: ' + location_key + '\n' + \
+                        'LocalizedName: ' + location_data['LocalizedName'] + ' ' + \
+                        location_data.get('SupplementalAdminAreas')[0].get('LocalizedName') + ' ' + \
+                        location_data['AdministrativeArea']['LocalizedName'] + ' ' + \
+                        location_data['Country']['LocalizedName'] + \
+                        '\n' + json.dumps(location_data, ensure_ascii=False, indent=4) 
         return resp
     except:
         logger.warning('accuweather_location_key_geo_search error', exc_info=True)
-        return HttpResponse('{}')
+        resp.content = json.dumps(location_data, ensure_ascii=False, indent=4)
+        return resp
     

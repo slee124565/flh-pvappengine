@@ -19,6 +19,8 @@ from django.contrib import admin
 
 from pvappengine import http_api as appeng_http_api
 
+from accuweather.views import accuweather_geo_location_search,accuweather_location_key_geo_search
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
@@ -28,4 +30,7 @@ urlpatterns = [
     url(r'^appeng/amchart/$', appeng_http_api.query_chart_data  ),
     url(r'^appeng/amchart/(?P<data_type>\w+)/$', appeng_http_api.query_chart_data  ),
 
+    url(r'^appeng/accu/geo_search/', accuweather_geo_location_search  ),
+    url(r'^appeng/accu/key_geo_search/', accuweather_location_key_geo_search  ),
+    
 ]

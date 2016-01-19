@@ -1,14 +1,18 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 from django.db.models import Max
+from django.conf import settings
+
 from datetime import datetime, date, time, timedelta
 
 from accuweather import *
 
+import urllib.request, json
 import logging
 logger = logging.getLogger(__name__)
 
 # Create your views here.
-from accuweather import CurrConditionType
+from accuweather import *
 from accuweather.models import CurrConditions
 
 def get_current_conditions():
@@ -95,5 +99,53 @@ def query_hourly_condition(condition=CurrConditionType.Temperature):
         info.append([datetime.combine(entry['prob_date'],t_time),entry[col_name + '__max']])
 
     return info
+
+def aw_search_location_by_geo(latitude,longitude):
+    '''
+    AccuWeather search location by GeoPosition API
+    return json data
+    '''
+    info = {}
+    t_apikey = settings.PVS_CONFIG['accuweather']['apikey']
+    t_url = AccuWeather_Location_Geo_Search_API.format(latitude=latitude,
+                                                       longitude=longitude,
+                                                       apikey=t_apikey)
+    try:
+        logger.debug(t_url)
+        with urllib.request.urlopen(t_url) as http_resp:
+            info = json.loads(http_resp.read().decode('utf-8'))
+            logger.debug(str(info))
+    except:
+        logger.error('aw_search_location_by_geo error', exc_info=True)
+    return info
+
+def accuweather_geo_location_search(request):
+    '''
+    web api for querying location by GeoPosition
+    param name: q
+    url example: http://hostname:port/path/?q=latitude,longitude
+    '''
+    try:
+        latitude,longitude = request.GET.get('q').split(',')
+        resp = HttpResponse(content_type='text/plain')
+        resp.content = json.dumps( aw_search_location_by_geo(latitude,longitude),indent=4)
+        return resp
+    except:
+        logger.warning('accuweather_geo_location_search error', exc_info=True)
+        return HttpResponse('{}')
     
+def accuweather_location_key_geo_search(request):
+    '''
+    web api for query location key by GeoPosition directly
+    param name: q
+    url example: http://hostname:port/path/?q=latitude,longitude    
+    '''
+    try:
+        latitude,longitude = request.GET.get('q').split(',')
+        resp = HttpResponse(content_type='text/plain')
+        resp.content = 'AccuWeather Location Key: ' + aw_search_location_by_geo(latitude,longitude).get('Key')
+        return resp
+    except:
+        logger.warning('accuweather_location_key_geo_search error', exc_info=True)
+        return HttpResponse('{}')
     

@@ -200,8 +200,8 @@ PVS_CONFIG = {
               'pvs' : [
                        {
                         'name': 'H5',
-                        'type': 'DELTA_PRI_H5', 
-                        'modbus_id': 2,
+                        'type': 'DELTA_PRI_H5', #-> refer to pvi.PVI_TYPE_LIST
+                        'modbus_id': 2, #-> pvi modbus address
                         'serial': {
                                    'port': '/dev/ttyUSB0',
                                    'baudrate': 9600,
@@ -214,7 +214,11 @@ PVS_CONFIG = {
                        ],
               'kWh_carbon_save_unit_kg': 0.637,
               'kWh_income_unit_ntd': 6.8633,
-              'accuweather_location_key': '3-315078_1_AL', #AccuWeather Taipei Location Key
+              'accuweather': {
+                              'apikey': 'ff1b463d98fb47af848ea2843ec5c925',
+                              #-> get location key by geo http://127.0.0.1:8000/appeng/accu/key_geo_search/?q=25.1058006,121.5198715
+                              'locationkey': '701769', #-> Taipei
+                              },
               }
 
 

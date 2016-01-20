@@ -114,7 +114,7 @@ def query_pvs_meta(request,pvi_name=None):
         # TODO: need to verify for multiple pvi pvstation
         logger.info('query_pvs_meta for all pvi')
         for name in pvi_list:
-            pvi_type = get_pvi_type(pvi_name)
+            pvi_type = get_pvi_type(name)
             add_pvi_info_into_pvs_meta(name,pvi_type)
     else:
         logger.info('query_pvs_meta for pvi %s' % pvi_name)

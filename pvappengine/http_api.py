@@ -222,12 +222,6 @@ def query_chart_data(request,data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_
         t_value = entry[1]
         if t_key in data_resp.keys():
             data_resp[t_key]['visibility'] = t_value
-        else:
-            data_resp[t_key] = {
-                                'date' : t_key,
-                                'energy' : 'N/A',
-                                'visibility' : t_value,
-                                }
     
     #-> sort by date
     date_list = list(data_resp.keys())

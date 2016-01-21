@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 from django.conf import settings
-import os, sys, django
+import os, sys, django, logging
+
+logger = logging.getLogger(__name__)
 
 if sys.platform == 'win32':
     sys_path_to_add = r'D:\lee_shiueh\FLH\workspace\pvstation\pvappengine'
@@ -12,11 +14,16 @@ sys.path.append(sys_path_to_add)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'pvappengine.settings'
 django.setup()
+    
+try:
+    from pvi.h5 import controller as h5_controller
+    h5_controller.save_all_pvi_input_register_value()
+    logger.info('h5_controller.save_all_pvi_input_register_value executed')
 
-from pvi.h5 import controller as h5_controller
-h5_controller.save_all_pvi_input_register_value()
+    from accuweather.models import CurrConditions
+    CurrConditions.save_current_location_condition(settings.PVS_CONFIG['accuweather']['locationkey'])
+    logger.info('CurrConditions.save_current_location_condition executed')
 
-from accuweather.models import CurrConditions
-CurrConditions.save_current_location_condition(settings.PVS_CONFIG['accuweather']['locationkey'])
-
+except:
+    logger.error('except', exc_info=True)
 

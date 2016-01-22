@@ -122,26 +122,20 @@ def query_pvs_meta(request,pvi_name=None):
         add_pvi_info_into_pvs_meta(pvi_name,pvi_type)
         
     add_environment_condition_into_pvs_meta()
-    pvs_meta['pvs_static']['today']['total_carbon_save'] = round(kWh_carbon_save_unit_kg 
-                                                                 * pvs_meta['pvs_static']['today']['total_eng_kwh'],
-                                                                 3)
-    pvs_meta['pvs_static']['today']['total_income'] = round(kWh_income_unit_ntd 
-                                                            * pvs_meta['pvs_static']['today']['total_eng_kwh'],
-                                                            4)
+    pvs_meta['pvs_static']['today']['total_carbon_save'] = '{:,.2f}'.format(kWh_carbon_save_unit_kg 
+                                                                 * pvs_meta['pvs_static']['today']['total_eng_kwh'])
+    pvs_meta['pvs_static']['today']['total_income'] = '{:,.2f}'.format(kWh_income_unit_ntd 
+                                                            * pvs_meta['pvs_static']['today']['total_eng_kwh'])
     
-    pvs_meta['pvs_static']['this_month']['total_carbon_save'] = round(kWh_carbon_save_unit_kg 
-                                                    * pvs_meta['pvs_static']['this_month']['total_eng_kwh'],
-                                                    3)
-    pvs_meta['pvs_static']['this_month']['total_income'] = round(kWh_income_unit_ntd 
-                                                    * pvs_meta['pvs_static']['this_month']['total_eng_kwh'],
-                                                    4)
+    pvs_meta['pvs_static']['this_month']['total_carbon_save'] = '{:,.1f}'.format(kWh_carbon_save_unit_kg 
+                                                    * pvs_meta['pvs_static']['this_month']['total_eng_kwh'])
+    pvs_meta['pvs_static']['this_month']['total_income'] = '{:,.1f}'.format(kWh_income_unit_ntd 
+                                                    * pvs_meta['pvs_static']['this_month']['total_eng_kwh'])
 
-    pvs_meta['pvs_static']['until_now']['total_carbon_save'] = round(kWh_carbon_save_unit_kg 
-                                                    * pvs_meta['pvs_static']['until_now']['total_eng_kwh'],
-                                                    3)
-    pvs_meta['pvs_static']['until_now']['total_income'] = round(kWh_income_unit_ntd 
-                                                    * pvs_meta['pvs_static']['until_now']['total_eng_kwh'],
-                                                    4)
+    pvs_meta['pvs_static']['until_now']['total_carbon_save'] = '{:,.0f}'.format(kWh_carbon_save_unit_kg 
+                                                    * pvs_meta['pvs_static']['until_now']['total_eng_kwh'])
+    pvs_meta['pvs_static']['until_now']['total_income'] = '{:,.0f}'.format(kWh_income_unit_ntd 
+                                                    * pvs_meta['pvs_static']['until_now']['total_eng_kwh'])
 
     logger.info('pvs_meta: %s' %  str(pvs_meta))
     return HttpResponse(json.dumps(pvs_meta))

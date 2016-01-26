@@ -1,6 +1,8 @@
 from django.http import HttpResponse
 from django.conf import settings
+
 from enum import Enum
+from datetime import datetime
 
 from pvappengine import *
 from pvi.views import query_pvi_info
@@ -13,7 +15,8 @@ logger = logging.getLogger(__name__)
 
 kWh_carbon_save_unit_kg = settings.PVS_CONFIG['kWh_carbon_save_unit_kg']
 kWh_income_unit_ntd = settings.PVS_CONFIG['kWh_income_unit_ntd']
-
+HOURLY_TIME_FORMAT = '%Y-%m-%d %H:00:00'
+DAILY_TIME_FORMAT = '%Y-%m-%d'
 
 pvs_meta = {
             'pvs_static': {
@@ -146,6 +149,67 @@ def query_pvs_meta(request,pvi_name=None):
     logger.info('pvs_meta: %s' %  str(pvs_meta))
     return HttpResponse(json.dumps(pvs_meta))
 
+def get_hourly_pvs_energy_dataset():
+    """return a list of hourly [(datetime,energy),...] for all pvs inverters"""
+    pvi_list = get_pvi_list_from_settings()
+    pvi_dataset = {}
+    for name in pvi_list:
+        pvi_type = get_pvi_type(name)
+        dataset = query_pvi_info(name, pvi_type, PVIQueryInfo.Energy_Hourly_List)
+        pvi_dataset[name] = dataset
+
+    pvs_dataset = {}
+    for name, dataset in pvi_dataset.items():
+        for entry in dataset:
+            t_datetime = entry[0]
+            t_key = t_datetime.strftime(HOURLY_TIME_FORMAT)
+            t_value = entry[1]
+            if t_key in pvs_dataset.keys():
+                pvs_dataset[t_key]['energy'] += t_value
+            else:
+                pvs_dataset[t_key] = {'date' : datetime.strptime(t_key,HOURLY_TIME_FORMAT),
+                                    'energy' : t_value,}
+    dataset = [[entry['date'],entry['energy']] for _, entry in pvs_dataset.items()]
+    dataset.sort(key = lambda x: x[0])
+    return dataset
+
+def get_daily_pvs_energy_dataset():
+    """return a list of daily [(datetime,energy)...] for all pvs inverters"""
+    pvi_list = get_pvi_list_from_settings()
+    pvi_dataset = {}
+    for name in pvi_list:
+        pvi_type = get_pvi_type(name)
+        dataset = query_pvi_info(name, pvi_type, PVIQueryInfo.Energy_Daily_List)
+        pvi_dataset[name] = dataset
+
+    pvs_dataset = {}
+    for name, dataset in pvi_dataset.items():
+        for entry in pvs_dataset:
+            t_datetime = entry[0]
+            t_key = t_datetime.strftime(DAILY_TIME_FORMAT)
+            t_value = entry[1]
+            if t_key in pvs_dataset.keys():
+                pvs_dataset[t_key]['energy'] += t_value
+            else:
+                pvs_dataset[t_key] = {'date' : datetime.strptime(t_key,DAILY_TIME_FORMAT),
+                                    'energy' : t_value,}
+    dataset = [[entry['date'],entry['energy']] for _, entry in pvs_dataset.items()]
+    dataset.sort(key = lambda x: x[0])
+    return dataset
+    
+def combine_dataset(time_format,**kwargs):
+    """return a list of [{date:datetime,key:value,...}...]"""
+    t_dataset = {}
+    for key in kwargs:
+        for entry in kwargs[key]:
+            t_key = entry[0].strftime(time_format)
+            if t_key in t_dataset.keys():
+                t_dataset[t_key][key] = entry[1]
+            else:
+                t_dataset[t_key] = {'date': t_key,
+                                    key: entry[1]}
+    return t_dataset
+
 def query_chart_data(request,data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_ENERGY_n_VISIBILITY.value):
     '''
     Web Application API
@@ -166,6 +230,28 @@ def query_chart_data(request,data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_
         pvi_query_info_type = PVIQueryInfo.Energy_Daily_List
     elif data_type == PVSChartsDataTypeEnum.PVS_AMCHARTS_HOURLY_ENERGY_n_VISIBILITY.value:
         pvi_query_info_type = PVIQueryInfo.Energy_Hourly_List
+    elif data_type == PVSChartsDataTypeEnum.PVS_AMCHARTS_HOURLY_ENERGY_VISIBILITY_UV.value:
+        #-> get hourly pvs energy dataset
+        pvs_dataset = get_hourly_pvs_energy_dataset()
+        logger.debug('pvs_dataset: ' + str(pvs_dataset))
+        #-> get hourly max env visibility dataset
+        visibility_dataset = accuweather_api.query_hourly_condition(CurrConditionType.Visibility)
+        logger.debug('visibility_dataset: ' + str(visibility_dataset))
+        #-> get hourly max env uv index dataset
+        uv_dataset = accuweather_api.query_hourly_condition(CurrConditionType.UV_Index)
+        logger.debug('uv_dataset: ' + str(uv_dataset))
+        #-> combine all dataset
+        t_dataset = combine_dataset(HOURLY_TIME_FORMAT,
+                                    energy = pvs_dataset,
+                                    visibility = visibility_dataset,
+                                    uv = uv_dataset)
+        logger.debug('combine_dataset: ' + str(t_dataset))
+        #-> sort by date
+        date_list = list(t_dataset.keys())
+        date_list.sort(key = lambda x : x)
+        resp_content = [t_dataset[t_date] for t_date in date_list]
+        
+        return HttpResponse(json.dumps(resp_content,indent=4))
     else:
         logger.warning('unknow param data_type {data_type}.'.format(data_type=data_type))
         return HttpResponse('')

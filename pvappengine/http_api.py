@@ -147,7 +147,11 @@ def query_pvs_meta(request,pvi_name=None):
                                                     pvs_meta['pvs_static']['until_now']['total_eng_kwh'])
 
     logger.info('pvs_meta: %s' %  str(pvs_meta))
-    return HttpResponse(json.dumps(pvs_meta))
+    response = HttpResponse(json.dumps(pvs_meta))
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = 0
+    return response
 
 def get_hourly_pvs_energy_dataset():
     """return a list of hourly [(datetime,energy),...] for all pvs inverters"""
@@ -251,7 +255,11 @@ def query_chart_data(request,data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_
         date_list.sort(key = lambda x : x)
         resp_content = [t_dataset[t_date] for t_date in date_list]
         
-        return HttpResponse(json.dumps(resp_content,indent=4))
+        response = HttpResponse(json.dumps(resp_content,indent=4))
+        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = 0
+        return response
     else:
         logger.warning('unknow param data_type {data_type}.'.format(data_type=data_type))
         return HttpResponse('')

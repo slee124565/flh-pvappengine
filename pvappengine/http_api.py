@@ -322,7 +322,11 @@ def query_chart_data(request,data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_
     date_list.sort(key = lambda x : x)
     resp_content = [data_resp[t_date] for t_date in date_list]
     
-    return HttpResponse(json.dumps(resp_content,indent=4))
+    response = HttpResponse(json.dumps(resp_content,indent=4))
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = 0
+    return response
         
 
 

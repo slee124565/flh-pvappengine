@@ -12,6 +12,14 @@ class RegCol(Enum):
     name = 1
     length = 2
 
+class MeasurementIndexCodeEnum(Enum):
+    """PRI H5 inverter `Measurement Index` value definition"""
+    u_grid = 0x00
+    u_dc1 = 0x30
+    u_dc2 = 0x31
+    p_bus = 0x40
+    n_bus = 0x41
+    
 HOLDING_REGISTER = {
     "Measurement Index": [
         "800",

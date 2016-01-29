@@ -17,6 +17,7 @@ django.setup()
     
 try:
     from pvi.h5 import controller as h5_controller
+    h5_controller.check_n_set_measurement_index()
     h5_controller.save_all_pvi_input_register_value()
     logger.info('h5_controller.save_all_pvi_input_register_value executed')
 

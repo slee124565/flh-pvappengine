@@ -2,16 +2,16 @@ from enum import Enum
 
 class RegCol(Enum):
     '''
-    This enum define the list index name in HOLDING_REGISTER & INPUT_REGISTER items
+    Sub-Class of `Enum` class. Define the column name and index in `INPUT_REGISTER` 
+    and `HOLDING_REGISTER` dictionary constant:
+    - `address`: the value of register address
+    - `name`: the name of register
+    - `length` : the length (word, 2 bytes) of register
     '''
     address = 0
     name = 1
     length = 2
 
-'''
-DELTA PRI H5 Holding Register address and word length
-item list index according to RegCol 
-'''
 HOLDING_REGISTER = {
     "Measurement Index": [
         "800",
@@ -24,11 +24,11 @@ HOLDING_REGISTER = {
         1
     ]
 }
+'''
+Constant `HOLDING_REGISTER` directory table. 
+Take register name as key and value in `RegCol` format
+'''
 
-'''
-DELTA PRI H5 Input Register address and word length
-item list index according to RegCol 
-'''
 INPUT_REGISTER = {
     "Delta 5K:Solar 1 RLeakageAvg": [
         "1163",
@@ -346,3 +346,7 @@ INPUT_REGISTER = {
         2
     ]
 }
+'''
+Constant `INPUT_REGISTER` directory table. 
+Take register name as key and value in `RegCol` format
+'''

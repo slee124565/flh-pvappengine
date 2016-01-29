@@ -92,17 +92,15 @@ def get_register_value_by_name(reg_name):
 
     return reg_value
 
-def check_db_n_set_measurement_index():
-    """check PRI H5 inverter `Measurement Index` register value from database
-    and set to U grid(0x00) if config value has been changed. This function 
-    should be called after function ``save_all_pvi_input_register_value``"""
+def check_n_set_measurement_index():
+    """check PRI H5 inverter `Measurement Index` register value
+    and set to U grid(0x00) if register value has been changed."""
     reg_name = 'Measurement Index'
-    reg_data = RegData.objects.filter(address=INPUT_REGISTER[reg_name][RegCol.address.value]).order_by('-date')[0]
-    reg_value = reg_data.value
+    reg_value = get_register_value_by_name(reg_name)
     if reg_value != MeasurementIndexCodeEnum.u_grid.value:
         logger.warning('inverter Measurement Index value %d is not U Grid config value %d, reset it' %(reg_value,
                                                             MeasurementIndexCodeEnum.u_grid.value))
-        instr.write_registers(HOLDING_REGISTER[reg_name][RegCol.address.value], 
+        instr.write_register(int(HOLDING_REGISTER[reg_name][RegCol.address.value])-1, 
                               MeasurementIndexCodeEnum.u_grid.value,
                               functioncode = 6)
         if get_register_value_by_name(reg_name) != MeasurementIndexCodeEnum.u_grid.value:

@@ -1,14 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db.models import Max
-from django.conf import settings
-
 from datetime import datetime, date, time, timedelta
 
-from accuweather import *
+#from accuweather import *
+from dbconfig.views import get_app_json_db_config
 
 import urllib.request, json
 import logging
+import accuweather
 logger = logging.getLogger(__name__)
 
 # Create your views here.
@@ -106,7 +106,8 @@ def aw_search_location_by_geo(latitude,longitude):
     return json data
     '''
     info = {}
-    t_apikey = settings.PVS_CONFIG['accuweather']['apikey']
+    dbconfig = get_app_json_db_config('accuweather', accuweather.DEFAULT_DB_CONFIG)
+    t_apikey = dbconfig['apikey']
     t_url = AccuWeather_Location_Geo_Search_API.format(latitude=latitude,
                                                        longitude=longitude,
                                                        apikey=t_apikey)
@@ -125,7 +126,8 @@ def aw_locations_api(location_key):
     return json data
     '''
     info = {}
-    t_apikey = settings.PVS_CONFIG['accuweather']['apikey']
+    dbconfig = get_app_json_db_config('accuweather', accuweather.DEFAULT_DB_CONFIG)
+    t_apikey = dbconfig['apikey']
     t_url = AccuWeather_Location_API.format(locationkey=location_key,
                                             apikey=t_apikey)
     try:

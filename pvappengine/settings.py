@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'dbconfig.apps.DbconfigConfig',
     'pvi.apps.PviConfig',
     'accuweather.apps.AccuweatherConfig',
     'django.contrib.admin',

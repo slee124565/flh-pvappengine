@@ -1,7 +1,7 @@
 from django.db import models
-from django.conf import settings
 from datetime import datetime
 from accuweather import *
+
 import urllib.request, json, logging
 
 logger = logging.getLogger(__name__)
@@ -29,13 +29,13 @@ class CurrConditions(models.Model):
                          str(self.sync_flag)])
     
     @classmethod
-    def save_current_location_condition(cls, location_key):
+    def save_current_location_condition(cls, location_key, accu_api_key):
         '''
         fetch location weather information from AccuWeather web server
         and save into database
         '''
         api_uri = AccuWeather_API.format(locationKey = location_key,
-                                         apikey = settings.PVS_CONFIG['accuweather']['apikey'])
+                                         apikey = accu_api_key)
         logger.debug('api_url: ' + api_uri)
         try:
             with urllib.request.urlopen(api_uri) as http_resp:
@@ -44,10 +44,13 @@ class CurrConditions(models.Model):
                 t_uv = curr_weather[0]['UVIndex']
                 t_visibility = curr_weather[0]['Visibility']['Metric']['Value']
                 db_entry = CurrConditions(
+                                          prob_date = datetime.now().date(),
+                                          prob_time = datetime.now().time(),
                                           prob_hour = datetime.now().hour,
                                           temperature = float(t_temperature),
                                           uv = int(t_uv),
-                                          visibility = float(t_visibility)
+                                          visibility = float(t_visibility),
+                                          sync_flag = False
                                           )
                 logger.debug('current condition: %s, %s, %s' % (t_temperature,t_uv,t_visibility))
                 db_entry.save()

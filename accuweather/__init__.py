@@ -18,3 +18,12 @@ class CurrConditionType:
     Temperature = 1
     UV_Index = 2
     Visibility = 3
+    
+DEFAULT_DB_CONFIG = {
+                      'apikey': 'ff1b463d98fb47af848ea2843ec5c925',
+                      #-> get location key by geo 
+                      #-> http://127.0.0.1:8000/appeng/accu/key_geo_search/?q=25.1058006,121.5198715
+                      'locationkey': '2516626', 
+                      #'locationkey': '701769', #-> Taipei
+                     }
+    

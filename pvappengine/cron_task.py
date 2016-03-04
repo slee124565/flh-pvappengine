@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 import os, sys, django, logging
-from dbconfig.views import get_app_json_db_config
-import accuweather
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +13,9 @@ sys.path.append(sys_path_to_add)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'pvappengine.settings'
 django.setup()
+
+from dbconfig.views import get_app_json_db_config
+import accuweather
     
 try:
     from pvi.h5 import controller as h5_controller

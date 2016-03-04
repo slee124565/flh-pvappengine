@@ -1,20 +1,23 @@
 from django.http import HttpResponse
-from django.conf import settings
 
 from enum import Enum
 from datetime import datetime
 
-from pvappengine import *
+from pvappengine import PVSChartsDataTypeEnum
+import pvappengine
 from pvi.views import query_pvi_info
 from pvi import *
+import pvi
 import accuweather.views as accuweather_api
 from accuweather import CurrConditionType
+from dbconfig.views import get_app_json_db_config
 
 import logging, json
 logger = logging.getLogger(__name__)
 
-kWh_carbon_save_unit_kg = settings.PVS_CONFIG['kWh_carbon_save_unit_kg']
-kWh_income_unit_ntd = settings.PVS_CONFIG['kWh_income_unit_ntd']
+db_config = get_app_json_db_config('pvappengine', pvappengine.DEFAULT_DB_CONFIG)
+kWh_carbon_save_unit_kg = db_config['kWh_carbon_save_unit_kg']
+kWh_income_unit_ntd = db_config['kWh_income_unit_ntd']
 HOURLY_TIME_FORMAT = '%Y-%m-%d %H:00:00'
 DAILY_TIME_FORMAT = '%Y-%m-%d'
 
@@ -49,13 +52,15 @@ def get_pvi_list_from_settings():
     '''
     return list of pvi name according to settings module's PVS_CONFIG
     '''
-    return [entry['name'] for entry in settings.PVS_CONFIG['pvs']]
+    db_config = get_app_json_db_config('pvi', pvi.DEFAULT_DB_CONFIG)
+    return [entry['name'] for entry in db_config]
 
 def get_pvi_type(pvi_name):
     '''
     string mapping for element in PVI_TYPE_LIST to PVIType
     '''
-    for entry in settings.PVS_CONFIG['pvs']:
+    db_config = get_app_json_db_config('pvi', pvi.DEFAULT_DB_CONFIG)
+    for entry in db_config:
         if entry['name'] == pvi_name:
             if entry['type'] == PVI_TYPE_DELTA_PRI_H5:
                 return PVIType.Delta_PRI_H5

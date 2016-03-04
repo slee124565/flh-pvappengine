@@ -1,5 +1,22 @@
 
 from enum import Enum
+import serial
+
+DEFAULT_DB_CONFIG = [
+                       {
+                        'name': 'H5',
+                        'type': 'DELTA_PRI_H5', #-> refer to pvi.PVI_TYPE_LIST
+                        'modbus_id': 2, #-> pvi modbus address
+                        'serial': {
+                                   'port': '/dev/ttyUSB0',
+                                   'baudrate': 9600,
+                                   'bytesize': 8,
+                                   'parity': serial.PARITY_NONE,
+                                   'stopbits': 1,
+                                   'timeout': 0.1,
+                                   }
+                        },
+                       ]
 
 # constant string for each PVI implemented by this package
 PVI_TYPE_DELTA_PRI_H5 = 'DELTA_PRI_H5'

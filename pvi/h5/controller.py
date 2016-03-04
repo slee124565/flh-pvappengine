@@ -1,9 +1,11 @@
 
 from pvi.h5 import *
+import pvi
 from pvi.models import RegData
 from django.db.models import Max
 from datetime import datetime, date, time, timedelta
 from pvi import *
+from dbconfig.views import get_app_json_db_config
 
 import logging, sys
 logger = logging.getLogger(__name__)
@@ -13,8 +15,7 @@ logger = logging.getLogger(__name__)
 #handler.setFormatter(formatter)
 #logger.addHandler(handler)
 
-from django.conf import settings
-t_pvs_config = settings.PVS_CONFIG['pvs'][0]
+t_pvs_config = get_app_json_db_config('pvi',pvi.DEFAULT_DB_CONFIG)[0]
 t_serial_port = t_pvs_config['serial']['port']
 t_modbus_id = t_pvs_config['modbus_id']
 t_pvs_name = t_pvs_config['name']

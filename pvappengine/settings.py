@@ -88,10 +88,10 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'pvstation',
+            'NAME': 'raspi',
             'HOST': 'localhost',
-            'USER': 'pvstation',
-            'PASSWORD': 'raspberry',
+            'USER': 'raspi',
+            'PASSWORD': 'WeKtqjUtGExPnDYt',
         }
     }
 

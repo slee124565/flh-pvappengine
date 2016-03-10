@@ -24,13 +24,13 @@ from accuweather.views import accuweather_geo_location_search,accuweather_locati
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
-    url(r'^appeng/pvs_meta/$', appeng_http_api.query_pvs_meta  ),
-    url(r'^appeng/pvs_meta/(?P<pvi_name>\w+)/$', appeng_http_api.query_pvs_meta  ),
+    url(r'^pvs_meta/$', appeng_http_api.query_pvs_meta  ),
+    url(r'^pvs_meta/(?P<pvi_name>\w+)/$', appeng_http_api.query_pvs_meta  ),
     
-    url(r'^appeng/amchart/$', appeng_http_api.query_chart_data  ),
-    url(r'^appeng/amchart/(?P<data_type>\w+)/$', appeng_http_api.query_chart_data  ),
+    url(r'^amchart/$', appeng_http_api.query_chart_data  ),
+    url(r'^amchart/(?P<data_type>\w+)/$', appeng_http_api.query_chart_data  ),
 
-    url(r'^appeng/accu/geo_search/', accuweather_geo_location_search  ),
-    url(r'^appeng/accu/key_geo_search/', accuweather_location_key_geo_search  ),
+    url(r'^accu/geo_search/', accuweather_geo_location_search  ),
+    url(r'^accu/key_geo_search/', accuweather_location_key_geo_search  ),
     
 ]

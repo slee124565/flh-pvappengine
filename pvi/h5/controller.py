@@ -227,7 +227,14 @@ def pvi_query_info_energy_hourly_list():
     logger.debug('query return:\n%s' % str(info))
     info.sort(key=lambda x: x[0])
 
-    info = [[entry[0],entry[1]*10] for entry in info]
+    if len(info) > 0:
+        info = [[entry[0],entry[1]*10] for entry in info]
+    else:
+        this_hour_time = datetime.combine(datetime.now().date(), time(datetime.now().hour,0,0))
+        #this_hour_time.strftime('%Y%m%d-%H%M%S')
+        for i in range(max_report_len):
+            info.append([this_hour_time,0])
+            this_hour_time -= timedelta(hours=1)
     
     info.reverse()
     dataset = info

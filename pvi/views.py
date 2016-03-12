@@ -2,7 +2,7 @@ from django.shortcuts import render
 from datetime import datetime, date
 
 from pvi import PVIType, PVIQueryInfo
-from pvi.h5 import controller as h5_controller\
+from pvi.h5 import controller as h5_controller
 from pvi.models import RegData
 
 import logging

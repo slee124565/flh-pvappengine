@@ -173,7 +173,7 @@ LOGGING = {
         'level': 'DEBUG'
     },
     'loggers': {
-        'pvi.h5': {
+        'pvi': {
             'handlers': ['console','default'],
             'level': 'DEBUG',
             'propagate': False

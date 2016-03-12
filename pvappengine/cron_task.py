@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 if sys.platform == 'win32':
     sys_path_to_add = r'D:\lee_shiueh\FLH\workspace\django_apps\pvappengine'
 else:
-    sys_path_to_add = '/home/pi/pvappengine'
+    sys_path_to_add = '/usr/share/pvappengine'
 #sys_path_to_add = os.path.dirname(os.path.dirname(os.getcwd()))
 sys.path.append(sys_path_to_add)
 

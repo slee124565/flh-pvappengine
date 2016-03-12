@@ -28,6 +28,11 @@ try:
     CurrConditions.save_current_location_condition(accu_dbconfig['locationkey'],
                                                    accu_dbconfig['apikey'])
     logger.info('CurrConditions.save_current_location_condition executed')
+    
+    import pvi.views
+    import accuweather.views
+    pvi.views.clear_expired_records()
+    accuweather.views.clear_expired_records()
 
 except:
     logger.error('except', exc_info=True)

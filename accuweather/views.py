@@ -15,6 +15,14 @@ logger = logging.getLogger(__name__)
 from accuweather import *
 from accuweather.models import CurrConditions
 
+def clear_expired_records():
+    expired_date = date(date.today().year-1,1,1)
+    count, _ = CurrConditions.objects.filter(prob_date__lt = expired_date).delete()
+    if count > 0:
+        logger.info('clear expired records %d' % count)
+    else:
+        logger.debug('no expired %s records' % str(expired_date))
+    
 def get_current_conditions():
     '''
     return current condition information as dictionary object

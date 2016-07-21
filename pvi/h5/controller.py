@@ -17,13 +17,15 @@ logger = logging.getLogger(__name__)
 
 t_pvs_config = get_app_json_db_config('pvi',pvi.DEFAULT_DB_CONFIG)[0]
 t_serial_port = t_pvs_config['serial']['port']
+t_serial_port = '/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller-if00-port0'
 t_modbus_id = t_pvs_config['modbus_id']
 t_pvs_name = t_pvs_config['name']
 t_pvs_type = t_pvs_config['type']
 logger.info('pvs[0] meta: {pvs_meta}'.format(pvs_meta=str(t_pvs_config)))
 
 import minimalmodbus, os
-if os.path.exists(t_serial_port):
+#if os.path.exists(t_serial_port):
+if True:
     instr = minimalmodbus.Instrument(t_serial_port,t_modbus_id)    
     instr.serial.baudrate = t_pvs_config['serial']['baudrate']
     instr.serial.bytesize = t_pvs_config['serial']['bytesize']

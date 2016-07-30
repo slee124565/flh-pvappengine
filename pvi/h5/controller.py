@@ -229,13 +229,20 @@ def pvi_query_info_energy_hourly_list():
     logger.debug('query return:\n%s' % str(info))
     info.sort(key=lambda x: x[0])
 
-    info = [[entry[0],entry[1]*10] for entry in info]
+    if len(info) > 0:
+        info = [[entry[0],entry[1]*10] for entry in info]
+    else:
+        logger.warning('no energy sample data in database')
+        this_hour_time = datetime.combine(datetime.now().date(), time(datetime.now().hour,0,0))
+        for i in range(MAX_QUERY_ENERGY_HOURLY_LIST_LEN):
+            info.append([this_hour_time,0])
+            this_hour_time -= timedelta(hours=1)
     
     info.reverse()
     dataset = info
     info = [[dataset[i][0],dataset[i][1]-dataset[i+1][1]] 
-            for i in range(len(dataset)-2) 
-            if dataset[i][0].date() == dataset[i+1][0].date()]
+    for i in range(len(dataset)-2) 
+        if dataset[i][0].date() == dataset[i+1][0].date()]
     info.reverse()
     
     #-> insert zero energy value for missing hour

@@ -7,7 +7,7 @@ for proj in ${proj_list}
 do
     if [ -d ${proj} ]; then
         cd ${proj}
-        git checkout -f && git pull origin master
+        git checkout -f && git clean -fx -d && git checkout master && git pull origin master
         cd -
     fi
 done

@@ -24,8 +24,8 @@ t_pvs_type = t_pvs_config['type']
 logger.info('pvs[0] meta: {pvs_meta}'.format(pvs_meta=str(t_pvs_config)))
 
 import minimalmodbus, os
-#if os.path.exists(t_serial_port):
-if True:
+if os.path.exists(t_serial_port):
+#if True:
     instr = minimalmodbus.Instrument(t_serial_port,t_modbus_id)    
     instr.serial.baudrate = t_pvs_config['serial']['baudrate']
     instr.serial.bytesize = t_pvs_config['serial']['bytesize']

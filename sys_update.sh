@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
 proj_list="/usr/share/pvappengine
-/usr/share/wordpress"
+/usr/share/pvstation"
 
 for proj in ${proj_list}
 do

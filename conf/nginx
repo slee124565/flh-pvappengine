@@ -5,12 +5,12 @@ server {
     location = /favicon.ico { access_log off; log_not_found off; }
     
 	location /static/ {
-        root /usr/share/flh-pvappengine;
+        root /usr/share/pvappengine;
     }
 
     location / {
         include uwsgi_params;
-        uwsgi_pass unix:/var/run/flh-pvappengine.sock;
+        uwsgi_pass unix:/var/run/pvappengine.sock;
     }
 }
 

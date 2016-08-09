@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 # /etc/init.d/uwsgi
 
 ### BEGIN INIT INFO
@@ -15,7 +15,7 @@
 case "$1" in 
     start)
         echo "Starting uWSGI"
-        exec /usr/local/bin/uwsgi --emperor /etc/uwsgi/apps-enabled &
+        exec /root/Env/appeng/bin/uwsgi --emperor /etc/uwsgi/apps-enabled &
         ;;
     stop)
         echo "Stopping uWSGI"
@@ -25,7 +25,7 @@ case "$1" in
 		echo "Restarting uWSGI"
 		killall uwsgi
         sleep 3
-		exec /usr/local/bin/uwsgi --emperor /etc/uwsgi/apps-enabled &
+		exec /root/Env/appeng/bin/uwsgi --emperor /etc/uwsgi/apps-enabled &
 		;;
     *)
         echo "Usage: /etc/init.d/uwsgi start|stop|restart"

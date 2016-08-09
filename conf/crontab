@@ -1,0 +1,2 @@
+30 23 * * * /usr/share/pvappengine/sys_update.sh
+*/19 1-22 * * * /usr/share/pvappengine/pvappengine/cron_task.py

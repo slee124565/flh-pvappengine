@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 t_pvs_config = get_app_json_db_config('pvi',pvi.DEFAULT_DB_CONFIG)[0]
 t_serial_port = t_pvs_config['serial']['port']
 t_serial_port = '/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller-if00-port0'
+t_serial_port = '/dev/serial/by-id/usb-FTDI_FT231X_USB_UART_DN00OMO5-if00-port0'
 t_modbus_id = t_pvs_config['modbus_id']
 t_pvs_name = t_pvs_config['name']
 t_pvs_type = t_pvs_config['type']

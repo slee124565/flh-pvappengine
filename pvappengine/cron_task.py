@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/root/Env/appeng/bin/python
 
 import os, sys, django, logging
 

@@ -209,7 +209,9 @@ def pvi_query_info_energy_hourly_list():
     '''
     provide function for query_pvi_info on PVIQueryInfo.Energy_Hourly_List
     '''
+    date_since = (datetime.now() + timedelta(hours=-MAX_QUERY_ENERGY_HOURLY_LIST_LEN)).date()
     queryset = RegData.objects.filter(address=INPUT_REGISTER['Today Wh'][RegCol.address.value]
+                            ).filter(prob_date__gt=date_since
                             ).values( 'prob_date', 'prob_hour'
                             ).annotate(Max('value')
                             ).order_by('-prob_date','-prob_hour')
@@ -264,7 +266,9 @@ def pvi_query_info_energy_daily_list():
     '''
     provide function for query_pvi_info on PVIQueryInfo.Energy_Daily_List
     '''
+    date_since = (datetime.now() + timedelta(days=-MAX_QUERY_ENERGY_DAILY_LIST_LEN)).date()
     queryset = RegData.objects.filter(address=INPUT_REGISTER['Today Wh'][RegCol.address.value]
+                                        ).filter(prob_date__gt=date_since
                                         ).values('prob_date'
                                         ).annotate(Max('value')
                                         ).order_by('-prob_date')

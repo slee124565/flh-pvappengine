@@ -66,7 +66,9 @@ def query_daily_condition(condition=CurrConditionType.Temperature):
     elif condition == CurrConditionType.Visibility:
         col_name = 'visibility'
     
+    date_since = (datetime.now() + timedelta(days=-MAX_QUERY_CONDITION_DAILY_LIST_LEN)).date()
     queryset = CurrConditions.objects.values('prob_date'
+                                        ).filter(prob_date__gt=date_since
                                         ).annotate(Max(col_name)
                                         ).order_by('-prob_date')
     info = []
@@ -92,7 +94,10 @@ def query_hourly_condition(condition=CurrConditionType.Temperature):
     elif condition == CurrConditionType.Visibility:
         col_name = 'visibility'
 
+    date_since = (datetime.now() + timedelta(hours=-MAX_QUERY_CONDITION_HOURLY_LIST_LEN)).date()
+
     queryset = CurrConditions.objects.values( 'prob_date', 'prob_hour'
+                            ).filter(prob_date__gt=date_since
                             ).annotate(Max(col_name)
                             ).order_by('-prob_date','-prob_hour')
     logger.debug('sql cmd: %s' % str(queryset.query))

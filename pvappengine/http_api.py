@@ -13,6 +13,7 @@ from accuweather import CurrConditionType
 from dbconfig.views import get_app_json_db_config
 
 import logging, json
+import accuweather
 logger = logging.getLogger(__name__)
 
 db_config = get_app_json_db_config('pvappengine', pvappengine.DEFAULT_DB_CONFIG)
@@ -333,7 +334,9 @@ def query_chart_data(request,data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_
     response['Expires'] = 0
     return response
         
-
+def clean_db(request):
+    pvi.models.RegData.objects.all().delete()
+    accuweather.models.CurrConditions.objects.all().delete()
 
         
         

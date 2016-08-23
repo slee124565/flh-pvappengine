@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.shortcuts import redirect
 
 from enum import Enum
 from datetime import datetime
@@ -11,6 +12,7 @@ import pvi
 import accuweather.views as accuweather_api
 from accuweather import CurrConditionType
 from dbconfig.views import get_app_json_db_config
+from models import WpOptions
 
 import logging, json
 import accuweather
@@ -337,7 +339,12 @@ def query_chart_data(request,data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_
 def clean_db(request):
     pvi.models.RegData.objects.all().delete()
     accuweather.models.CurrConditions.objects.all().delete()
-    return HttpResponse('DB table pvi_regdata & accuweather_currcondition rowdata purged')
+    queryset = WpOptions.objects.filter(option_name='siteurl')
+    if queryset.count() > 0:
+        siteurl = queryset[0]['option_value']
+        redirect(siteurl)
+    else:
+        return HttpResponse('DB table pvi_regdata & accuweather_currcondition rowdata purged')
 
         
         

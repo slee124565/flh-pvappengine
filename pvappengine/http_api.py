@@ -337,6 +337,7 @@ def query_chart_data(request,data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_
 def clean_db(request):
     pvi.models.RegData.objects.all().delete()
     accuweather.models.CurrConditions.objects.all().delete()
+    return HttpResponse('DB table pvi_regdata & accuweather_currcondition rowdata purged')
 
         
         

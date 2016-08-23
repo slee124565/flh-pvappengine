@@ -12,7 +12,7 @@ import pvi
 import accuweather.views as accuweather_api
 from accuweather import CurrConditionType
 from dbconfig.views import get_app_json_db_config
-from models import WpOptions
+from wordpress.models import WpOptions
 
 import logging, json
 import accuweather
@@ -341,8 +341,10 @@ def clean_db(request):
     accuweather.models.CurrConditions.objects.all().delete()
     queryset = WpOptions.objects.filter(option_name='siteurl')
     if queryset.count() > 0:
-        siteurl = queryset[0]['option_value']
-        redirect(siteurl)
+        for entry in queryset:
+            siteurl = str(entry.option_value)
+            if (siteurl != ''):
+                return redirect(siteurl)
     else:
         return HttpResponse('DB table pvi_regdata & accuweather_currcondition rowdata purged')
 

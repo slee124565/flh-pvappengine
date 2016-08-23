@@ -33,4 +33,5 @@ urlpatterns = [
     url(r'^accu/geo_search/', accuweather_geo_location_search  ),
     url(r'^accu/key_geo_search/', accuweather_location_key_geo_search  ),
     
+    url(r'^dbclean/$', appeng_http_api.clean_db  ),
 ]

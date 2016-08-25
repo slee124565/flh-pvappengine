@@ -32,6 +32,7 @@ t_serial_port = '/dev/serial/by-id/usb-FTDI_FT231X_USB_UART_DN00OMO5-if00-port0'
 t_serial_list = get_serial_device_list()
 if len(t_serial_list) > 0:
     t_serial_port = t_serial_list[0]
+    logger.info('auto config serial port: %s' % t_serial_port)
 t_modbus_id = t_pvs_config['modbus_id']
 t_pvs_name = t_pvs_config['name']
 t_pvs_type = t_pvs_config['type']

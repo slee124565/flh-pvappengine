@@ -6,6 +6,7 @@ from django.db.models import Max
 from datetime import datetime, date, time, timedelta
 from pvi import *
 from dbconfig.views import get_app_json_db_config
+import os
 
 import logging, sys
 logger = logging.getLogger(__name__)
@@ -15,10 +16,22 @@ logger = logging.getLogger(__name__)
 #handler.setFormatter(formatter)
 #logger.addHandler(handler)
 
+def get_serial_device_list():
+    dev_path_list = []
+    SERIAL_DEV_PATH = '/dev/serial/by-id'
+    if os.path.exists(SERIAL_DEV_PATH):
+        for serial_dev in os.listdir(SERIAL_DEV_PATH):
+            #logger.debug('serial device: %s' % serial_dev)
+            dev_path_list.append(SERIAL_DEV_PATH + '/' + serial_dev)
+    return dev_path_list
+
 t_pvs_config = get_app_json_db_config('pvi',pvi.DEFAULT_DB_CONFIG)[0]
 t_serial_port = t_pvs_config['serial']['port']
 t_serial_port = '/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller-if00-port0'
 t_serial_port = '/dev/serial/by-id/usb-FTDI_FT231X_USB_UART_DN00OMO5-if00-port0'
+t_serial_list = get_serial_device_list()
+if len(t_serial_list) > 0:
+    t_serial_port = t_serial_list[0]
 t_modbus_id = t_pvs_config['modbus_id']
 t_pvs_name = t_pvs_config['name']
 t_pvs_type = t_pvs_config['type']

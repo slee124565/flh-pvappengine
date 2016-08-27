@@ -6,6 +6,12 @@ server {
     
 	location /static/ {
         root /usr/share/pvappengine;
+        autoindex on;
+    }
+
+    location /logs/ {
+        root /usr/share/pvappengine;
+        autoindex on;
     }
 
     location / {

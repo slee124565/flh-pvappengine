@@ -446,6 +446,7 @@ class DeltaPRIH5(minimalmodbus.Instrument):
     
     def set_register_measurement_index(self, value = MEASUREMENT_INDEX_CODE_U_GRID):
         logger.debug('set_register_measurement_index: %s' % value)
+        reg_name = 'Measurement Index'
         self.write_register(int(HOLDING_REGISTER[reg_name][REGISTER_ADDRESS_COL])-1, 
                               MEASUREMENT_INDEX_CODE_U_GRID,
                               functioncode = 6)
@@ -455,14 +456,14 @@ if __name__ == '__main__':
     minimalmodbus._print_out('Testing Delta PRI H5 PVI')
     
     serial_by_id = '/dev/ttyUSB0'
-    modbus_id = 1
+    modbus_id = 2
     instr = DeltaPRIH5(serial_by_id,modbus_id)
     instr.serial.baudrate = 9600
     instr.serial.bytesize = 8
     instr.serial.parity = 'N'
     instr.serial.stopbits = 1    
     instr.serial.timeout = 0.1
-    instr.debug=True
+    #instr.debug=True
     
     minimalmodbus._print_out('set Measurement Index to GRID ...')
     instr.set_register_measurement_index()

@@ -467,7 +467,7 @@ if __name__ == '__main__':
     
     minimalmodbus._print_out('Testing Delta PVI PRI-H5 with serial port: %s and modbus ID: %s' % (serial_by_id, modbus_id))
 
-    instr = DeltaPRIH5(serial_by_id,modbus_id)
+    instr = DeltaPRIH5(serial_by_id,int(modbus_id))
     instr.serial.baudrate = 9600
     instr.serial.bytesize = 8
     instr.serial.parity = 'N'

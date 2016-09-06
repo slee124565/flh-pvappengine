@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os, sys
+from django.conf.global_settings import EMAIL_BACKEND
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -95,6 +96,14 @@ else:
             'PASSWORD': 'WeKtqjUtGExPnDYt',
         }
     }
+
+# Email backend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 993
+EMAIL_HOST_USER = 'lee.pvstation@gmail.com'
+EMAIL_HOST_PASSWORD = 'Since2016'
+EMAIL_USE_SSL = True
 
 
 # Password validation

@@ -12,7 +12,7 @@ Driver for the Delta PRI H5 PVI communicated wiht Modbus RTU protocol.
 
 import minimalmodbus
 import logging
-import time
+import sys
 logger = logging.getLogger(__name__)
 
 __author__  = "Lee Shiueh"
@@ -453,10 +453,20 @@ class DeltaPRIH5(minimalmodbus.Instrument):
         
 if __name__ == '__main__':
     
-    minimalmodbus._print_out('Testing Delta PRI H5 PVI')
+    usage = 'Usage: python %s <serial_port> <modbus_id>' % sys.argv[0]
     
-    serial_by_id = '/dev/ttyUSB0'
-    modbus_id = 2
+    #serial_by_id = '/dev/ttyUSB0'
+    #modbus_id = 2
+    if len(sys.argv) > 2:
+        serial_by_id = sys.argv[1]
+        modbus_id = sys.argv[2]
+    else:
+        minimalmodbus._print_out('Python Script Param Error!')
+        minimalmodbus._print_out(usage)
+        sys.exit(0) 
+    
+    minimalmodbus._print_out('Testing Delta PVI PRI-H5 with serial port: %s and modbus ID: %s' % (serial_by_id, modbus_id))
+
     instr = DeltaPRIH5(serial_by_id,modbus_id)
     instr.serial.baudrate = 9600
     instr.serial.bytesize = 8

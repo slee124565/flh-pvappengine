@@ -16,6 +16,7 @@ django.setup()
 
 from dbconfig.views import get_app_json_db_config
 import accuweather
+import pvi
     
 try:
     from accuweather.models import CurrConditions
@@ -24,9 +25,11 @@ try:
                                                    accu_dbconfig['apikey'])
     logger.info('CurrConditions.save_current_location_condition executed')
     
-    from pvi.h5 import controller as h5_controller
-    h5_controller.check_n_set_measurement_index()
-    h5_controller.save_all_pvi_input_register_value()
+    #from pvi.h5 import controller as h5_controller
+    #h5_controller.check_n_set_measurement_index()
+    #h5_controller.save_all_pvi_input_register_value()
+    from pvi.views import save_all_pvi_input_register_value
+    save_all_pvi_input_register_value(get_app_json_db_config('pvi', pvi.DEFAULT_DB_CONFIG))
     logger.info('h5_controller.save_all_pvi_input_register_value executed')
 
     import pvi.views

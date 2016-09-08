@@ -265,7 +265,7 @@ def save_all_pvi_input_register_value(pvi_config_list):
             inverter.serial.parity = pvi_config.get('serial').get('parity') 
             inverter.serial.stopbits = pvi_config.get('serial').get('stopbits')   
             inverter.serial.timeout = pvi_config.get('serial').get('timeout')
-            inverter.debug = True
+            #inverter.debug = True
             inverter.set_register_measurement_index()
             for reg_name in h5.Register_Polling_List:
                 reg_addr = h5.INPUT_REGISTER.get(reg_name)[h5.REGISTER_ADDRESS_COL]
@@ -278,5 +278,6 @@ def save_all_pvi_input_register_value(pvi_config_list):
                                     )
                 reg_data.save()
                 logger.info('save reg_data: %s, %s, %s' % (reg_name, reg_addr, reg_value))
+            logger.info('='*20)
             
     

@@ -1,15 +1,11 @@
 #!/root/Env/appeng/bin/python
 
 import os, sys, django, logging
+proj_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 logger = logging.getLogger(__name__)
-
-if sys.platform == 'win32':
-    sys_path_to_add = r'D:\lee_shiueh\FLH\workspace\django_apps\pvappengine'
-else:
-    sys_path_to_add = '/usr/share/pvappengine'
-#sys_path_to_add = os.path.dirname(os.path.dirname(os.getcwd()))
-sys.path.append(sys_path_to_add)
+logger.debug('pvappengine project root path: %s' % proj_root)
+sys.path.append(proj_root)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'pvappengine.settings'
 django.setup()

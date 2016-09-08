@@ -274,9 +274,10 @@ def query_chart_data(request,data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_
         
     pvi_dataset = {}
     pvi_list = get_pvi_list_from_settings()
-    logger.info('query_for_amchart for pvi %d chart %s data' % (data_type,str(pvi_list)))
+    logger.debug('pvi_list: %s' % str(pvi_list))
     for name in pvi_list:
         pvi_type = get_pvi_type(name)
+        logger.debug('pvi name: %s, type: %s' % (name, PVIType(pvi_type).name))
         dataset = query_pvi_info(name, pvi_type, pvi_query_info_type)
         pvi_dataset[name] = dataset
     

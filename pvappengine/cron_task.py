@@ -19,6 +19,10 @@ CurrConditions.save_current_location_condition(accu_dbconfig['locationkey'],
                                                accu_dbconfig['apikey'])
 print('CurrConditions.save_current_location_condition executed')
 
+from pvappengine.pvcloud_task import pvcloud_report_v1
+pvcloud_report_v1()
+print('pvcloud_report executed')
+
 from pvi.views import save_all_pvi_input_register_value
 save_all_pvi_input_register_value(get_app_json_db_config('pvi', pvi.DEFAULT_DB_CONFIG))
 print('h5_controller.save_all_pvi_input_register_value executed')
@@ -26,8 +30,5 @@ print('h5_controller.save_all_pvi_input_register_value executed')
 import accuweather.views
 pvi.views.clear_expired_records()
 accuweather.views.clear_expired_records()
-
-from pvappengine.pvcloud_task import pvcloud_report_v1
-pvcloud_report_v1()
 
 

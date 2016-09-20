@@ -7,10 +7,10 @@ from dbconfig.models import AppOption
 from pi import get_pi_cpuinfo
 
 import requests
-import urllib
 import json
 
 PVCLOUD_URL = 'https://server-dot-solar-cloud-143410.appspot.com'
+PVCLOUD_URL = 'http://104.199.209.26:8080'
 PVCLOUD_REPORT_URL = PVCLOUD_URL + '/pvs/report/'
 
 def pvcloud_report_v1():
@@ -21,7 +21,7 @@ def pvcloud_report_v1():
     {
         'version': 'v1',
         'cpuinfo': { 
-                    'hardware': 'xxx',
+                    'hardware': 'xxx',s
                     'revision': 'xxx',
                     'serial': 'xxx',
                      },

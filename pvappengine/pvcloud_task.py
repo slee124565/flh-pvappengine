@@ -10,6 +10,7 @@ import requests
 import urllib
 
 PVCLOUD_URL = 'https://server-dot-solar-cloud-143410.appspot.com'
+PVCLOUD_REPORT_URL = PVCLOUD_URL + '/pvs/report/'
 
 def pvcloud_report_v1():
     '''implement pvstation client report to pvcloud server function
@@ -40,11 +41,13 @@ def pvcloud_report_v1():
     report_data['dbconfig'] = dbconfig
     
     encrypt_report = signing.dumps(report_data)
-    
-    r = requests.post(PVCLOUD_URL,data={'data': encrypt_report})
-    logging.debug('pvcloud_report_v1 response status code %s and data\n%s' % (r.status_code,
+
+    #logging.debug('report url: %s' % PVCLOUD_REPORT_URL)    
+    r = requests.post(PVCLOUD_REPORT_URL,data={'data': encrypt_report})
+    logging.debug('pvcloud_report_v1 response status code %s and data:\n%s' % (r.status_code,
                                                                               r.text))
     if r.status_code == 200:
+        print(r.text)
         return True
     else:
         logging.warning('pvcloud_report_v1 http post failed!')

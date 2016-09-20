@@ -8,6 +8,7 @@ from pi import get_pi_cpuinfo
 
 import requests
 import urllib
+import json
 
 PVCLOUD_URL = 'https://server-dot-solar-cloud-143410.appspot.com'
 PVCLOUD_REPORT_URL = PVCLOUD_URL + '/pvs/report/'
@@ -32,9 +33,11 @@ def pvcloud_report_v1():
     '''
     dbconfig = {}
     entry = AppOption.objects.get(app_name = 'pvi')
-    dbconfig['pvi'] = entry.json_data
+    if not entry is None:
+        dbconfig['pvi'] = json.loads(entry.json_data)
     entry = AppOption.objects.get(app_name = 'accuweather')
-    dbconfig['accuweather'] = entry.json_data
+    if not entry is None:
+        dbconfig['accuweather'] = json.loads(entry.json_data)
     
     report_data = {'version': 'v1'}
     report_data['cpuinfo'] = get_pi_cpuinfo()
@@ -52,4 +55,4 @@ def pvcloud_report_v1():
     else:
         logging.warning('pvcloud_report_v1 http post failed!')
         return False
-    
+

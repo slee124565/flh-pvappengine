@@ -27,4 +27,7 @@ import accuweather.views
 pvi.views.clear_expired_records()
 accuweather.views.clear_expired_records()
 
+from pvappengine.pvcloud_task import pvcloud_report_v1
+pvcloud_report_v1()
+
 

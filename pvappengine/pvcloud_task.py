@@ -47,12 +47,13 @@ def pvcloud_report_v1():
 
     #logging.debug('report url: %s' % PVCLOUD_REPORT_URL)    
     r = requests.post(PVCLOUD_REPORT_URL,data={'data': encrypt_report})
-    logging.debug('pvcloud_report_v1 response status code %s and data:\n%s' % (r.status_code,
+    logger.debug('pvcloud_report_v1 response status code %s and data:\n%s' % (r.status_code,
                                                                               r.text))
     if r.status_code == 200:
         print(r.text)
         return True
     else:
-        logging.warning('pvcloud_report_v1 http post failed!')
+        print('pvcloud_report_v1 http post failed, check log file!')
+        logger.warning('pvcloud_report_v1 http post failed!')
         return False
 

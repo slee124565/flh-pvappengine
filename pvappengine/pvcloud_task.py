@@ -10,7 +10,7 @@ import requests
 import json
 
 PVCLOUD_URL = 'https://server-dot-solar-cloud-143410.appspot.com'
-PVCLOUD_URL = 'http://104.199.209.26:8080'
+#PVCLOUD_URL = 'http://104.199.209.26:8000'
 PVCLOUD_REPORT_URL = PVCLOUD_URL + '/pvs/report/'
 
 def pvcloud_report_v1():

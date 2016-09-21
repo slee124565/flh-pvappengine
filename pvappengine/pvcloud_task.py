@@ -65,6 +65,10 @@ def pvcloud_dbconfig_v1():
     with querystring sserial=<signed([pi_seria-timestamp])>
     2. update database dbconfig if new config exist
     3. ack (http post) for pvcloud about config updated
+    with payload 
+    { 'config_id' = 'xxx', 'serial': '<pi_serial>', 'result':'pass|fail' }
+    to signed as
+    { 'data': <signed_payload> }
     '''
     pi_serial = get_pi_cpuinfo().get('serial','')
 
@@ -74,5 +78,34 @@ def pvcloud_dbconfig_v1():
     if r.status_code == 200:
         resp_content = signing.loads(r.text)
         print('dbconfig query result: \n%s' % json.dumps(resp_content,indent=2))
+        
+        if resp_content.get('config_id',None) is None:
+            logger.debug('no new dbconfig entry from pvcloud')
+            return
     else:
         logger.warning('dbconfig query fail!')
+        return
+        
+    # TODO: update database dbconfig if new config exist
+
+    
+    payload = {'config_id': resp_content.get('config_id'),
+               'serial': pi_serial,
+               'result': 'pass',
+               }
+    logger.debug('origin payload data: \n%s' % str(payload))
+    
+    r = requests.post(PVCLOUD_DBCONFIG_URL,data={'data' : signing.dumps(payload)})
+    if r.status_code == 200:
+        print(r.text)
+        return True
+    else:
+        logger.warning('pvcloud_dbconfig_v1 post result fail!')
+        print('pvcloud_dbconfig_v1 post result fail!')
+        return False
+    
+        
+        
+        
+        
+        

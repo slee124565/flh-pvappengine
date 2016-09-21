@@ -1,4 +1,5 @@
 from django.core import signing
+from datetime import datetime
 
 import logging
 logger = logging.getLogger(__name__)
@@ -12,6 +13,7 @@ import json
 PVCLOUD_URL = 'https://server-dot-solar-cloud-143410.appspot.com'
 #PVCLOUD_URL = 'http://104.199.209.26:8000'
 PVCLOUD_REPORT_URL = PVCLOUD_URL + '/pvs/report/'
+PVCLOUD_DBCONFIG_URL = PVCLOUD_URL + '/pvs/dbconfig/'
 
 def pvcloud_report_v1():
     '''implement pvstation client report to pvcloud server function
@@ -57,3 +59,21 @@ def pvcloud_report_v1():
         logger.warning('pvcloud_report_v1 http post failed!')
         return False
 
+def pvcloud_dbconfig_v1():
+    '''implement the client site for pvcloud dbconfig web api
+    1. query (http get) pvcloud if there is dbconfig exist
+    with querystring sserial=<signed([pi_seria-timestamp])>
+    2. update database dbconfig if new config exist
+    3. ack (http post) for pvcloud about config updated
+    '''
+    pi_serial = get_pi_cpuinfo().get('serial','')
+
+    sserial = signing.dumps('[%s]' % 
+                            pi_serial + '-' + datetime.now().strftime('%Y%m%d%H%M%S'))
+    r = requests.get(PVCLOUD_DBCONFIG_URL,params={'sserial': sserial})
+    
+    if r.status_code == 200:
+        resp_content = signing.loads(r.text)
+        print('dbconfig query result: \n%s' % json.dumps(resp_content,indent=2))
+    else:
+        logger.warning('dbconfig query fail!')

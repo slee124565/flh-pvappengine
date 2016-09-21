@@ -87,7 +87,19 @@ def pvcloud_dbconfig_v1():
         return
         
     # TODO: update database dbconfig if new config exist
-
+    new_dbconfig = resp_content.get('data',None)
+    if new_dbconfig is None:
+        logger.warning('no new dbconfig data exist')
+        return
+    logger.debug('received dbconfig: \n%s' % json.dumps(new_dbconfig,indent=2))
+    for key in new_dbconfig:
+        entry = AppOption.objects.get(app_name=key)
+        if entry is None:
+            logger.warning('dbconfig key (%s) not exist in appoption table' % key)
+        else:
+            entry.json_data = json.dumps(new_dbconfig[key])
+            # TODO
+    
     
     payload = {'config_id': resp_content.get('config_id'),
                'serial': pi_serial,

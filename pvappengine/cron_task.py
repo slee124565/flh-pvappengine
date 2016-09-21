@@ -3,7 +3,7 @@
 import os, sys, django
 proj_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-print('pvappengine project root: %s' % proj_root)
+#print('pvappengine project root: %s' % proj_root)
 sys.path.append(proj_root)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'pvappengine.settings'
@@ -19,8 +19,9 @@ CurrConditions.save_current_location_condition(accu_dbconfig['locationkey'],
                                                accu_dbconfig['apikey'])
 print('CurrConditions.save_current_location_condition executed')
 
-from pvappengine.pvcloud_task import pvcloud_report_v1
+from pvappengine.pvcloud_task import pvcloud_report_v1, pvcloud_dbconfig_v1
 pvcloud_report_v1()
+pvcloud_dbconfig_v1()
 print('pvcloud_report executed')
 
 from pvi.views import save_all_pvi_input_register_value

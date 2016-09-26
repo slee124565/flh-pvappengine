@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 from dbconfig.models import AppOption
 from dbconfig.views import get_app_json_db_config
-from pi import get_pi_cpuinfo, PiCpuInfo
+from pi import get_pi_cpuinfo,get_local_ip, PiCpuInfo
 
 import requests
 import json
@@ -39,6 +39,7 @@ class PVCloudReport:
     def __init__(self,cpuinfo,dbconfig):
         self.cpuinfo = cpuinfo
         self.dbconfig = dbconfig
+        self.local_ip = get_local_ip()
         
     def __call__(self):
         return { 

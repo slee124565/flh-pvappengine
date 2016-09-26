@@ -2,7 +2,6 @@
 import os
 import logging
 from subprocess import check_output
-from sys import exc_info
 
 logger = logging.getLogger(__name__)
 
@@ -66,8 +65,8 @@ def get_pi_cpuinfo():
 def get_local_ip():
     '''return local ip address'''
     try:
-        local_ip = check_output(['hostname', '-I'])
-        logger.debug('current local ip address %s' & local_ip)
+        local_ip = check_output(['hostname', '-I']).decode().strip()
+        logger.debug('current local ip address %s' % local_ip)
         return local_ip
     except:
         logger.warning('get_local_ip fail', exc_info=True)

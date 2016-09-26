@@ -72,7 +72,7 @@ def pvcloud_report_v1_1():
         pvcloud_report = PVCloudReport(PiCpuInfo(),PVSDBConfig())
         logger.debug('pvcloud_report v1.1:\n%s' % str(pvcloud_report()))
         
-        encrypt_report = signing.dumps(pvcloud_report)
+        encrypt_report = signing.dumps(pvcloud_report())
     
         #logging.debug('report url: %s' % PVCLOUD_REPORT_URL)
         PVCLOUD_REPORT_URL_V1_1 = PVCLOUD_REPORT_URL + 'v1_1/'    

@@ -22,8 +22,8 @@ CurrConditions.save_current_location_condition(accu_dbconfig['locationkey'],
                                                accu_dbconfig['apikey'])
 print('CurrConditions.save_current_location_condition executed')
 
-from pvappengine.pvcloud_task import pvcloud_report_v1, pvcloud_dbconfig_v1
-pvcloud_report_v1()
+from pvappengine.pvcloud_task import pvcloud_report_v1_1, pvcloud_dbconfig_v1
+pvcloud_report_v1_1()
 time.sleep(random.randrange(1,5))
 pvcloud_dbconfig_v1()
 print('pvcloud_report executed')

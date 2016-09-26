@@ -5,16 +5,105 @@ import logging
 logger = logging.getLogger(__name__)
 
 from dbconfig.models import AppOption
-from pi import get_pi_cpuinfo
+from dbconfig.views import get_app_json_db_config
+from pi import get_pi_cpuinfo,get_local_ip, PiCpuInfo
 
 import requests
 import json
 
-PVCLOUD_URL = 'https://server-dot-solar-cloud-143410.appspot.com'
-#PVCLOUD_URL = 'http://104.199.209.26:8000'
+SERVER_USE = 1
+
+PVCLOUD_URL_STAGING='https://staging-dot-solar-cloud-143410.appspot.com'
+PVCLOUD_URL_PRODCUT='https://server-dot-solar-cloud-143410.appspot.com'
+PVCLOUD_URL_TEST='http://104.199.209.26:8000'
+
+if SERVER_USE == 1:
+    PVCLOUD_URL = PVCLOUD_URL_PRODCUT
+    logger.info('using production pvcloud url (%s)' % PVCLOUD_URL)
+elif SERVER_USE == 2:
+    PVCLOUD_URL = PVCLOUD_URL_STAGING
+    logger.info('using staging pvcloud url (%s)' % PVCLOUD_URL)
+else:
+    PVCLOUD_URL = PVCLOUD_URL_TEST
+    logger.info('using testing pvcloud url (%s)' % PVCLOUD_URL)
+    
 PVCLOUD_REPORT_URL = PVCLOUD_URL + '/pvs/report/'
 PVCLOUD_DBCONFIG_URL = PVCLOUD_URL + '/pvs/dbconfig/'
 
+class PVSDBConfig:
+    pvi = None
+    accuweather = None
+    
+    def __init__(self):
+        self.pvi = get_app_json_db_config('pvi', '{}')
+        self.accuweather = get_app_json_db_config('accuweather', '{}')
+    
+    def __call__(self):
+        return {
+                'pvi': self.pvi,
+                'accuweather': self.accuweather
+                }
+    
+class PVCloudReport:
+    version = 'v1.1'
+    local_ip = '127.0.0.1'
+    cpuinfo = None
+    dbconfig = None
+    
+    def __init__(self,cpuinfo,dbconfig):
+        self.cpuinfo = cpuinfo
+        self.dbconfig = dbconfig
+        self.local_ip = get_local_ip()
+        
+    def __call__(self):
+        return { 
+                'version': 'v1.1',
+                'local_ip': self.local_ip,
+                'cpuinfo': self.cpuinfo() if callable(self.cpuinfo) else self.cpuinfo,
+                'dbconfig': self.dbconfig() if callable(self.dbconfig) else self.dbconfig,
+                }
+
+def pvcloud_report_v1_1():
+    '''implement pvstation client report to pvcloud server function
+    post encrypted json data for pvcloud web api
+    ::
+    
+    {
+        'version': 'v1.1',
+        'local_ip': 'xxx.xxx.xxx.xxx',
+        'cpuinfo': { 
+                    'hardware': 'xxx',s
+                    'revision': 'xxx',
+                    'serial': 'xxx',
+                     },
+        'dbconfig' : {
+                    'pvi': '<json data>',
+                    'accuweather': '<json data>'
+                     },
+    }
+    '''
+    try:
+        pvcloud_report = PVCloudReport(PiCpuInfo(),PVSDBConfig())
+        logger.debug('pvcloud_report v1.1:\n%s' % str(pvcloud_report()))
+        
+        encrypt_report = signing.dumps(pvcloud_report())
+    
+        #logging.debug('report url: %s' % PVCLOUD_REPORT_URL)
+        PVCLOUD_REPORT_URL_V1_1 = PVCLOUD_REPORT_URL + 'v1_1/'    
+        r = requests.post(PVCLOUD_REPORT_URL_V1_1,data={'data': encrypt_report})
+        logger.debug('pvcloud_report_v1 response status code %s and data:\n%s' % (r.status_code,
+                                                                                  r.text))
+        if r.status_code == 200:
+            print(r.text)
+            return True
+        else:
+            print('pvcloud_report_v1 http post failed, check log file!')
+            logger.warning('pvcloud_report_v1 http post failed!')
+            return False
+    except:
+        logger.error('pvcloud_report_v1_1 fail!', exc_info=True)
+        return False
+        
 def pvcloud_report_v1():
     '''implement pvstation client report to pvcloud server function
     post encrypted json data for pvcloud web api

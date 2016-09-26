@@ -10,6 +10,9 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'pvappengine.settings'
 django.setup()
 
 from pvappengine.pvcloud_task import *
+from pi import *
 
 #pvcloud_report_v1()
-pvcloud_dbconfig_v1()
+#pvcloud_dbconfig_v1()
+pvcloud_report_v1_1()
+#print('get_local_ip:' + str(get_local_ip()))

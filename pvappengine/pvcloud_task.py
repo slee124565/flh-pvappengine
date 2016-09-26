@@ -11,8 +11,22 @@ from pi import get_pi_cpuinfo,get_local_ip, PiCpuInfo
 import requests
 import json
 
-PVCLOUD_URL = 'https://server-dot-solar-cloud-143410.appspot.com'
-PVCLOUD_URL = 'http://104.199.209.26:8000'
+SERVER_USE = 1
+
+PVCLOUD_URL_STAGING='https://staging-dot-solar-cloud-143410.appspot.com'
+PVCLOUD_URL_PRODCUT='https://server-dot-solar-cloud-143410.appspot.com'
+PVCLOUD_URL_TEST='http://104.199.209.26:8000'
+
+if SERVER_USE == 1:
+    PVCLOUD_URL = PVCLOUD_URL_PRODCUT
+    logger.info('using production pvcloud url (%s)' % PVCLOUD_URL)
+elif SERVER_USE == 2:
+    PVCLOUD_URL = PVCLOUD_URL_STAGING
+    logger.info('using staging pvcloud url (%s)' % PVCLOUD_URL)
+else:
+    PVCLOUD_URL = PVCLOUD_URL_TEST
+    logger.info('using testing pvcloud url (%s)' % PVCLOUD_URL)
+    
 PVCLOUD_REPORT_URL = PVCLOUD_URL + '/pvs/report/'
 PVCLOUD_DBCONFIG_URL = PVCLOUD_URL + '/pvs/dbconfig/'
 

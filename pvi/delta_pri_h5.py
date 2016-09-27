@@ -448,7 +448,7 @@ class DeltaPRIH5(minimalmodbus.Instrument):
         logger.debug('set_register_measurement_index: %s' % value)
         reg_name = 'Measurement Index'
         self.write_register(int(HOLDING_REGISTER[reg_name][REGISTER_ADDRESS_COL])-1, 
-                              MEASUREMENT_INDEX_CODE_U_GRID,
+                              value,
                               functioncode = 6)
         
 if __name__ == '__main__':
@@ -475,7 +475,6 @@ if __name__ == '__main__':
     instr.serial.timeout = 0.1
     #instr.debug=True
     
-    minimalmodbus._print_out('set Measurement Index to GRID ...')
     instr.set_register_measurement_index()
     
     for reg_name in Register_Polling_List:

@@ -7,6 +7,8 @@ logger = logging.getLogger(__name__)
 from dbconfig.models import AppOption
 from dbconfig.views import get_app_json_db_config
 from pi import get_pi_cpuinfo,get_local_ip, PiCpuInfo
+from pvi.models import RegData
+from pvi.delta_pri_h5 import INPUT_REGISTER, REGISTER_ADDRESS_COL, Register_Polling_List
 
 import requests
 import json
@@ -31,6 +33,9 @@ PVCLOUD_REPORT_URL = PVCLOUD_URL + '/pvs/report/'
 PVCLOUD_DBCONFIG_URL = PVCLOUD_URL + '/pvs/dbconfig/'
 
 class PVSDBConfig:
+    '''query database dbconfig_appoption table with appname in [pvi,accuweather]
+    and be a callable object with json data return
+    '''
     pvi = None
     accuweather = None
     
@@ -43,6 +48,54 @@ class PVSDBConfig:
                 'pvi': self.pvi,
                 'accuweather': self.accuweather
                 }
+
+class PVEnergySyncReport:
+    '''query database pvi_regdata table with sync_flag = False and
+    specific (pvi_type,address) with limited rowdata
+    To be a callable object with json data return
+    Update sync_flag = True with database when rowdata is synced with 
+    pvcloud server
+    '''
+    MAX_REPORT_COUNT = len(Register_Polling_List) * 6
+    model_queryset = None
+    
+    def __init__(self):
+        self.model_queryset = PVEnergySyncReport.query_unsync_regdata()
+        
+    @classmethod
+    def query_unsync_regdata(cls):
+        return RegData.objects.filter(sync_flag=False).order_by('-id')[:cls.MAX_REPORT_COUNT]
+    
+    @classmethod
+    def map_delta_pri_h5_reg_address_to_name(cls,reg_address):
+        '''only map energy_dc_life, energy_today, ac_output_voltage,
+        ac_output_current, ac_output_watt
+        '''
+        if str(reg_address) == INPUT_REGISTER.get('DC Life Wh')[REGISTER_ADDRESS_COL]:
+            return 'en_dc_life'
+
+        if str(reg_address) == INPUT_REGISTER.get('Today Wh')[REGISTER_ADDRESS_COL]:
+            return 'en_today'
+
+        if str(reg_address) == INPUT_REGISTER.get('Voltage')[REGISTER_ADDRESS_COL]:
+            return 'voltage'
+        
+        if str(reg_address) == INPUT_REGISTER.get('Current')[REGISTER_ADDRESS_COL]:
+            return 'current'
+
+        if str(reg_address) == INPUT_REGISTER.get('Wattage')[REGISTER_ADDRESS_COL]:
+            return 'wattage'
+        
+        return str(reg_address)
+            
+    def __call__(self):
+        return [{'data_id': entry.id,
+                 'create_time': entry.date.strftime('%Y-%m-%d %H:%M:%S'),
+                 'pvi_name':entry.pvi_name,
+                 'modbus_id':entry.modbus_id,
+                 'value': entry.value,
+                 'data_type': PVEnergySyncReport.map_delta_pri_h5_reg_address_to_name(entry.address),
+                 'measurement_index':'grid'} for entry in self.model_queryset]
     
 class PVCloudReport:
     version = 'v1.1'
@@ -63,6 +116,55 @@ class PVCloudReport:
                 'dbconfig': self.dbconfig() if callable(self.dbconfig) else self.dbconfig,
                 }
 
+class PVCloudReport_v1_2(PVCloudReport):
+    version = 'v1.2'
+    energy_sync_report = None   # list of PVEnergySyncReport
+    
+    def __init__(self,cpuinfo,dbconfig,energy_sync_report):
+        super(PVCloudReport_v1_2,self).__init__(cpuinfo, dbconfig)
+        self.energy_sync_report = energy_sync_report
+        
+    def update_energy_report_sync(self):
+        for entry in self.energy_sync_report.model_queryset:
+            entry.sync_flag = True
+            entry.save() 
+        logger.debug('PVCloudReport_v1_2.update_energy_report_sync')
+        
+    def __call__(self):
+        json_data = super(PVCloudReport_v1_2,self).__call__()
+        json_data['energy'] = self.energy_sync_report() if callable(self.energy_sync_report) else self.energy_sync_report
+        return json_data
+            
+class HTTPReportToPVCloud_v1_2:
+    pvcloud_report = None
+    
+    def __init__(self):
+        self.pvcloud_report = PVCloudReport_v1_2(PiCpuInfo(),PVSDBConfig(),PVEnergySyncReport())
+    
+    def __call__(self):
+        try:
+            report_json = self.pvcloud_report()
+            encrypt_report = signing.dumps(report_json)
+        
+            #logging.debug('report url: %s' % PVCLOUD_REPORT_URL)
+            PVCLOUD_REPORT_URL_version = PVCLOUD_REPORT_URL + self.pvcloud_report.version.replace('.','_') + '/'   
+            logger.debug('pvcloud url %s' % PVCLOUD_REPORT_URL_version)
+            r = requests.post(PVCLOUD_REPORT_URL_version,data={'data': encrypt_report})
+            logger.debug('%s response status code %s' % (self.__class__.__name__,
+                                                        r.status_code))
+            if r.status_code == 200:
+                print(r.text)
+                logger.info('call HTTPReportToPVCloud_v1_2 object success')
+                self.pvcloud_report.update_energy_report_sync()
+                return True
+            else:
+                logger.warning('%s get error http response code %s!' % (self.__class__.__name__,
+                                                                        r.status_code))
+                return False
+        except:
+            logger.error('%s fail!' % self.__class__.__name__, exc_info=True)
+            return False
+    
 def pvcloud_report_v1_1():
     '''implement pvstation client report to pvcloud server function
     post encrypted json data for pvcloud web api

@@ -145,7 +145,7 @@ class HTTPReportToPVCloud_v1_2:
             encrypt_report = signing.dumps(report_json)
         
             #logging.debug('report url: %s' % PVCLOUD_REPORT_URL)
-            PVCLOUD_REPORT_URL_version = PVCLOUD_REPORT_URL + self.pvcloud_report.version.replace('.','_')    
+            PVCLOUD_REPORT_URL_version = PVCLOUD_REPORT_URL + self.pvcloud_report.version.replace('.','_') + '/'   
             logger.debug('pvcloud url %s' % PVCLOUD_REPORT_URL_version)
             r = requests.post(PVCLOUD_REPORT_URL_version,data={'data': encrypt_report})
             logger.debug('%s response status code %s and data:\n%s' % (

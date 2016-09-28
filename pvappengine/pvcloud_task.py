@@ -13,7 +13,7 @@ from pvi.delta_pri_h5 import INPUT_REGISTER, REGISTER_ADDRESS_COL, Register_Poll
 import requests
 import json
 
-SERVER_USE = 3
+SERVER_USE = 1
 
 PVCLOUD_URL_STAGING='https://staging-dot-solar-cloud-143410.appspot.com'
 PVCLOUD_URL_PRODCUT='https://server-dot-solar-cloud-143410.appspot.com'

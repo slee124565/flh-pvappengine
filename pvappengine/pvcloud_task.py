@@ -56,7 +56,7 @@ class PVEnergySyncReport:
     Update sync_flag = True with database when rowdata is synced with 
     pvcloud server
     '''
-    MAX_REPORT_COUNT = len(Register_Polling_List) * 8
+    MAX_REPORT_COUNT = len(Register_Polling_List) * 6
     model_queryset = None
     
     def __init__(self):
@@ -150,10 +150,8 @@ class HTTPReportToPVCloud_v1_2:
             PVCLOUD_REPORT_URL_version = PVCLOUD_REPORT_URL + self.pvcloud_report.version.replace('.','_') + '/'   
             logger.debug('pvcloud url %s' % PVCLOUD_REPORT_URL_version)
             r = requests.post(PVCLOUD_REPORT_URL_version,data={'data': encrypt_report})
-            logger.debug('%s response status code %s and data:\n%s' % (
-                                                                       self.__class__.__name__,
-                                                                       r.status_code,
-                                                                       r.text))
+            logger.debug('%s response status code %s' % (self.__class__.__name__,
+                                                        r.status_code))
             if r.status_code == 200:
                 print(r.text)
                 logger.info('call HTTPReportToPVCloud_v1_2 object success')

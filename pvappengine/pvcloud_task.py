@@ -56,7 +56,7 @@ class PVEnergySyncReport:
     Update sync_flag = True with database when rowdata is synced with 
     pvcloud server
     '''
-    MAX_REPORT_COUNT = len(Register_Polling_List) * 1
+    MAX_REPORT_COUNT = len(Register_Polling_List) * 8
     model_queryset = None
     
     def __init__(self):
@@ -75,7 +75,7 @@ class PVEnergySyncReport:
             return 'en_dc_life'
 
         if str(reg_address) == INPUT_REGISTER.get('Today Wh')[REGISTER_ADDRESS_COL]:
-            return 'en_toady'
+            return 'en_today'
 
         if str(reg_address) == INPUT_REGISTER.get('Voltage')[REGISTER_ADDRESS_COL]:
             return 'voltage'

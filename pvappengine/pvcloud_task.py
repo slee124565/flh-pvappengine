@@ -13,7 +13,7 @@ from pvi.delta_pri_h5 import INPUT_REGISTER, REGISTER_ADDRESS_COL, Register_Poll
 import requests
 import json
 
-SERVER_USE = 1
+SERVER_USE = 3
 
 PVCLOUD_URL_STAGING='https://staging-dot-solar-cloud-143410.appspot.com'
 PVCLOUD_URL_PRODCUT='https://server-dot-solar-cloud-143410.appspot.com'
@@ -90,7 +90,7 @@ class PVEnergySyncReport:
             
     def __call__(self):
         return [{'data_id': entry.id,
-                 'create_time': entry.date,
+                 'create_time': entry.date.strftime('%Y-%m-%d %H:%M:%S'),
                  'pvi_name':entry.pvi_name,
                  'modbus_id':entry.modbus_id,
                  'value': entry.value,
@@ -124,6 +124,10 @@ class PVCloudReport_v1_2(PVCloudReport):
         super(PVCloudReport_v1_2,self).__init__(cpuinfo, dbconfig)
         self.energy_sync_report = energy_sync_report
         
+    def update_energy_report_sync(self):
+        self.energy_sync_report.model_queryset.update(sync_flag=True)
+        logger.debug('PVCloudReport_v1_2.update_energy_report_sync')
+        
     def __call__(self):
         json_data = super(PVCloudReport_v1_2,self).__call__()
         json_data['energy'] = self.energy_sync_report() if callable(self.energy_sync_report) else self.energy_sync_report
@@ -150,6 +154,8 @@ class HTTPReportToPVCloud_v1_2:
                                                                        r.text))
             if r.status_code == 200:
                 print(r.text)
+                logger.info('call HTTPReportToPVCloud_v1_2 object success')
+                self.pvcloud_report.update_energy_report_sync()
                 return True
             else:
                 logger.warning('%s get error http response code %s!' % (self.__class__.__name__,

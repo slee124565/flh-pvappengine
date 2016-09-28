@@ -125,7 +125,9 @@ class PVCloudReport_v1_2(PVCloudReport):
         self.energy_sync_report = energy_sync_report
         
     def update_energy_report_sync(self):
-        RegData.objects.filter(pk__in=self.energy_sync_report.model_queryset).update(sync_flag=True) 
+        for entry in self.energy_sync_report.model_queryset:
+            entry.sync_flag = True
+            entry.save() 
         logger.debug('PVCloudReport_v1_2.update_energy_report_sync')
         
     def __call__(self):

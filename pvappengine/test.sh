@@ -16,5 +16,8 @@ from pi import *
 #pvcloud_dbconfig_v1()
 #pvcloud_report_v1_1()
 #print('get_local_ip:' + str(get_local_ip()))
-http_report = HTTPReportToPVCloud_v1_2()
-print(json.dumps(http_report.pvcloud_report(),indent=2))
+#http_report = HTTPReportToPVCloud_v1_2()
+#print(json.dumps(http_report.pvcloud_report(),indent=2))
+
+report = HTTPReportToPVCloud_v1_2()
+report()

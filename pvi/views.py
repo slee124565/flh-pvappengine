@@ -7,9 +7,11 @@ from pvi.models import RegData
 import pvi.delta_pri_h5 as h5
 import os
 import pvi
+from time import sleep
 from datetime import timedelta, time
 
 import logging
+from sys import exc_info
 logger = logging.getLogger(__name__)
 
 def pvi_query_info_energy_hourly_list():
@@ -266,18 +268,30 @@ def save_all_pvi_input_register_value(pvi_config_list):
             inverter.serial.stopbits = pvi_config.get('serial').get('stopbits')   
             inverter.serial.timeout = pvi_config.get('serial').get('timeout')
             #inverter.debug = True
-            inverter.set_register_measurement_index()
-            for reg_name in h5.Register_Polling_List:
-                reg_addr = h5.INPUT_REGISTER.get(reg_name)[h5.REGISTER_ADDRESS_COL]
-                reg_value = inverter.read_input_register_by_name(reg_name)
-                reg_data = RegData(modbus_id=modbus_id,
-                                    pvi_name=pvi_name,
-                                    #date = datetime.datetime.now(),
-                                    address = reg_addr,
-                                    value = float(reg_value),
-                                    )
-                reg_data.save()
-                logger.info('save reg_data: %s, %s, %s' % (reg_name, reg_addr, reg_value))
-            logger.info('='*20)
-            
+            retry_count = 0
+            reg_read_success = False
+            MAX_RETRY_TIME = 5
+            while ( (retry_count < MAX_RETRY_TIME) and (reg_read_success == False) ):
+                try:
+                    inverter.set_register_measurement_index()
+                    for reg_name in h5.Register_Polling_List:
+                        reg_addr = h5.INPUT_REGISTER.get(reg_name)[h5.REGISTER_ADDRESS_COL]
+                        reg_value = inverter.read_input_register_by_name(reg_name)
+                        reg_data = RegData(modbus_id=modbus_id,
+                                            pvi_name=pvi_name,
+                                            #date = datetime.datetime.now(),
+                                            address = reg_addr,
+                                            value = float(reg_value),
+                                            )
+                        reg_data.save()
+                        logger.info('save reg_data: %s, %s, %s' % (reg_name, reg_addr, reg_value))
+                    reg_read_success = True
+                    
+                except:
+                    retry_count += 1
+                    logger.warning('inverter connect exception, try %s!' % retry_count
+                                   , exc_info = True)
+                    sleep(1)
+                    
+        logger.info('='*20)
     

@@ -7,6 +7,7 @@ from pvi.models import RegData
 import pvi.delta_pri_h5 as h5
 import os
 import pvi
+from time import sleep
 from datetime import timedelta, time
 
 import logging
@@ -269,7 +270,8 @@ def save_all_pvi_input_register_value(pvi_config_list):
             #inverter.debug = True
             retry_count = 0
             reg_read_success = False
-            while ( (retry_count < 3) and (reg_read_success == False) ):
+            MAX_RETRY_TIME = 5
+            while ( (retry_count < MAX_RETRY_TIME) and (reg_read_success == False) ):
                 try:
                     inverter.set_register_measurement_index()
                     for reg_name in h5.Register_Polling_List:
@@ -287,8 +289,9 @@ def save_all_pvi_input_register_value(pvi_config_list):
                     
                 except:
                     retry_count += 1
-                    logger.warning('inverter connect exception, retry %s!' % retry_count
+                    logger.warning('inverter connect exception, try %s!' % retry_count
                                    , exc_info = True)
+                    sleep(1)
                     
         logger.info('='*20)
     

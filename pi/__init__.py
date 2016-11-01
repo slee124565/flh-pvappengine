@@ -63,11 +63,11 @@ def get_pi_cpuinfo():
         return {}
     
 def get_local_ip():
-    '''return local ip address'''
+    '''return first local ip address'''
     try:
         local_ip = check_output(['hostname', '-I']).decode().strip()
         logger.debug('current local ip address %s' % local_ip)
-        return local_ip
+        return local_ip.split(' ')[0]
     except:
         logger.warning('get_local_ip fail', exc_info=True)
         return ''

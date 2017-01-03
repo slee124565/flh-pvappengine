@@ -501,7 +501,7 @@ class DeltaPRIH5(minimalmodbus.Instrument):
     
         energy_monthly_list = []
         for i in range(31):
-            reg_name = 'Day-%s Wh' % i
+            reg_name = 'Month-%s Wh' % i
             energy_monthly_list.append([rtc_date,self.read_input_register_by_name(reg_name)])
             rtc_date = date(rtc_date.year,rtc_month,1) + timedelta(days=-1)
         

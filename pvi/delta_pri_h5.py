@@ -13,6 +13,7 @@ Driver for the Delta PRI H5 PVI communicated wiht Modbus RTU protocol.
 import minimalmodbus
 import logging
 import sys
+from datetime import datetime
 logger = logging.getLogger(__name__)
 
 __author__  = "Lee Shiueh"
@@ -481,6 +482,31 @@ class DeltaPRIH5(minimalmodbus.Instrument):
         rtc_second = self.read_input_register_by_name('RTC_Second')
         
         return (rtc_year,rtc_month,rtc_day,rtc_hour,rtc_minute,rtc_second)
+    
+    def set_rtc_with_sys_clock(self):
+        logger.debug('current rtc %s' % str(self.get_rtc_value()))
+        sys_time = datetime.now
+        logger.debug('current system clock %s' % str(sys_time))
+        self.write_register(int(INPUT_REGISTER['RTC_Year'][REGISTER_ADDRESS_COL])-1, 
+                              sys_time.year,
+                              functioncode = 6)
+        self.write_register(int(INPUT_REGISTER['RTC_Month'][REGISTER_ADDRESS_COL])-1, 
+                              sys_time.month,
+                              functioncode = 6)
+        self.write_register(int(INPUT_REGISTER['RTC_Day'][REGISTER_ADDRESS_COL])-1, 
+                              sys_time.day,
+                              functioncode = 6)
+        self.write_register(int(INPUT_REGISTER['RTC_Hour'][REGISTER_ADDRESS_COL])-1, 
+                              sys_time.hour,
+                              functioncode = 6)
+        self.write_register(int(INPUT_REGISTER['RTC_Minute'][REGISTER_ADDRESS_COL])-1, 
+                              sys_time.minute,
+                              functioncode = 6)
+        self.write_register(int(INPUT_REGISTER['RTC_Second'][REGISTER_ADDRESS_COL])-1, 
+                              sys_time.second,
+                              functioncode = 6)
+
+        logger.debug('new rtc %s' % str(self.get_rtc_value()))
         
 if __name__ == '__main__':
     
@@ -517,4 +543,5 @@ if __name__ == '__main__':
         minimalmodbus._print_out('%s, %s, %s' % (reg_name, reg_addr, reg_value))
         minimalmodbus._print_out('-'*20)
     
-        minimalmodbus._print_out('PVI RTC: %s' % instr.get_rtc_value())
+    #minimalmodbus._print_out('PVI RTC: %s' % str(instr.get_rtc_value()))
+    instr.set_rtc_with_sys_clock()

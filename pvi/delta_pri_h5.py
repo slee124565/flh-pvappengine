@@ -335,41 +335,17 @@ INPUT_REGISTER = {
         "Today Runtime",
         2
     ],
-    "Day-0 Wh": [
-        "2048",
-        "Day-0 Wh",
-        2
-    ],
-    "Day-1 Wh": [
-        "2050",
-        "Day-1 Wh",
-        2
-    ],
-    "Day-2 Wh": [
-        "2052",
-        "Day-2 Wh",
-        2
-    ],
-    "Day-3 Wh": [
-        "2054",
-        "Day-3 Wh",
-        2
-    ],
-    "Day-4 Wh": [
-        "2056",
-        "Day-4 Wh",
-        2
-    ],
-    "Day-5 Wh": [
-        "2058",
-        "Day-5 Wh",
-        2
-    ],
-    "Day-6 Wh": [
-        "2060",
-        "Day-6 Wh",
-        2
-    ],
+    "Day-0 Wh": ["2048","Day-0 Wh",2],"Day-1 Wh": ["2050","Day-1 Wh",2],"Day-2 Wh": ["2052","Day-2 Wh",2],"Day-3 Wh": ["2054","Day-3 Wh",2],"Day-4 Wh": ["2056","Day-4 Wh",2],"Day-5 Wh": ["2058","Day-5 Wh",2],"Day-6 Wh": ["2060","Day-6 Wh",2],
+    "Day-7 Wh": ["2062","Day-7 Wh",2],"Day-8 Wh": ["2064","Day-8 Wh",2],"Day-9 Wh": ["2066","Day-6 Wh",2],"Day-10 Wh": ["2068","Day-10 Wh",2],"Day-11 Wh": ["2070","Day-11 Wh",2],"Day-12 Wh": ["2072","Day-12 Wh",2],"Day-13 Wh": ["2074","Day-13 Wh",2],
+    "Day-14 Wh": ["2076","Day-14 Wh",2],"Day-15 Wh": ["2078","Day-15 Wh",2],"Day-16 Wh": ["2080","Day-16 Wh",2],"Day-17 Wh": ["2082","Day-17 Wh",2],"Day-18 Wh": ["2084","Day-18 Wh",2],"Day-19 Wh": ["2086","Day-19 Wh",2],"Day-20 Wh": ["2088","Day-20 Wh",2],
+    "Day-21 Wh": ["2090","Day-21 Wh",2],"Day-22 Wh": ["2092","Day-22 Wh",2],"Day-23 Wh": ["2094","Day-23 Wh",2],"Day-24 Wh": ["2096","Day-24 Wh",2],"Day-25 Wh": ["2098","Day-25 Wh",2],"Day-26 Wh": ["2100","Day-26 Wh",2],"Day-27 Wh": ["2102","Day-27 Wh",2],
+    "Day-28 Wh": ["2104","Day-28 Wh",2],"Day-29 Wh": ["2106","Day-29 Wh",2],"Day-30 Wh": ["2108","Day-30 Wh",2],"Day-31 Wh": ["2110","Day-31 Wh",2],
+    "Month-0 Wh": ["2112","Month-0 Wh",2],"Month-1 Wh": ["2114","Month-1 Wh",2],"Month-2 Wh": ["2116","Month-2 Wh",2],"Month-3 Wh": ["2118","Month-3 Wh",2],
+    "Month-4 Wh": ["2120","Month-4 Wh",2],"Month-5 Wh": ["2122","Month-5 Wh",2],"Month-6 Wh": ["2124","Month-6 Wh",2],"Month-7 Wh": ["2126","Month-7 Wh",2],
+    "Month-8 Wh": ["2128","Month-8 Wh",2],"Month-9 Wh": ["2130","Month-9 Wh",2],"Month-10 Wh": ["2132","Month-10 Wh",2],"Month-11 Wh": ["2134","Month-11 Wh",2],
+    "Month-12 Wh": ["2136","Month-12 Wh",2],"Month-13 Wh": ["2138","Month-13 Wh",2],"Month-14 Wh": ["2140","Month-14 Wh",2],"Month-15 Wh": ["2142","Month-15 Wh",2],
+    "Month-16 Wh": ["2144","Month-16 Wh",2],"Month-17 Wh": ["2146","Month-17 Wh",2],"Month-18 Wh": ["2148","Month-18 Wh",2],"Month-19 Wh": ["2150","Month-19 Wh",2],
+    "Month-20 Wh": ["2152","Month-20 Wh",2],"Month-21 Wh": ["2154","Month-21 Wh",2],"Month-22 Wh": ["2156","Month-22 Wh",2],"Month-23 Wh": ["2158","Month-23 Wh",2],
 }
 '''
 Constant `INPUT_REGISTER` directory table. 
@@ -420,15 +396,17 @@ Register_Polling_List = [
                     'Today Runtime',
                     'DC Life Wh',
                     'DC Life Runtime',
-                    'Day-0 Wh',
-                    'Day-1 Wh',
-                    'Day-2 Wh',
-                    'Day-3 Wh',
-                    'Day-4 Wh',
-                    'Day-5 Wh',
-                    'Day-6 Wh',
                     ]
 
+def get_history_reg_name_list():
+    history_list = []
+    for i in range(31):
+        history_list.append('Day-%s Wh' % i)
+    for i in range(23):
+        history_list.append('Month-%s Wh' % i)
+    minimalmodbus._print_out('history_list: %s' % history_list)
+    return history_list
+    
 class DeltaPRIH5(minimalmodbus.Instrument):
     '''Instrument class for Delta PRI-H5 PV Inverter.
     
@@ -519,7 +497,8 @@ if __name__ == '__main__':
     
     instr.set_register_measurement_index()
     
-    for reg_name in Register_Polling_List:
+    #for reg_name in Register_Polling_List:
+    for reg_name in get_history_reg_name_list():
         reg_data = INPUT_REGISTER.get(reg_name)
         reg_addr = INPUT_REGISTER[reg_name][REGISTER_ADDRESS_COL]
         minimalmodbus._print_out('read register value for name: %s, address: %s ...' % (reg_name,reg_addr))

@@ -13,7 +13,7 @@ Driver for the Delta PRI H5 PVI communicated wiht Modbus RTU protocol.
 import minimalmodbus
 import logging
 import sys
-from datetime import datetime
+from datetime import datetime, date, timedelta
 logger = logging.getLogger(__name__)
 
 __author__  = "Lee Shiueh"
@@ -483,7 +483,21 @@ class DeltaPRIH5(minimalmodbus.Instrument):
         
         return (rtc_year,rtc_month,rtc_day,rtc_hour,rtc_minute,rtc_second)
     
+    def get_energy_day_x_list(self):
+        rtc_year, rtc_month, rtc_day,_,_,_ = self.get_rtc_value()
+        rtc_date = datetime(rtc_year,rtc_month,rtc_day).date()
+        energy_daily_list = []
+        for i in range(31):
+            reg_name = 'Day-%s Wh' % i
+            energy_daily_list.append([rtc_date,self.read_input_register_by_name(reg_name)])
+            rtc_date += timedelta(days=-1)
+        
+        return energy_daily_list
+    
+    '''
     def set_rtc_with_sys_clock(self):
+        #PVI Response ValueError
+        #ValueError: The slave is indicating an error. The response is: '\x02\x86\x023¡'
         logger.debug('current rtc %s' % str(self.get_rtc_value()))
         sys_time = datetime.now()
         logger.debug('current system clock %s' % str(sys_time))
@@ -507,6 +521,7 @@ class DeltaPRIH5(minimalmodbus.Instrument):
                               functioncode = 6)
 
         logger.debug('new rtc %s' % str(self.get_rtc_value()))
+    '''
         
 if __name__ == '__main__':
     
@@ -544,4 +559,6 @@ if __name__ == '__main__':
         minimalmodbus._print_out('-'*20)
     
     #minimalmodbus._print_out('PVI RTC: %s' % str(instr.get_rtc_value()))
-    instr.set_rtc_with_sys_clock()
+    #instr.set_rtc_with_sys_clock()
+    
+    minimalmodbus._print_out(str(instr.get_energy_day_x_list()))

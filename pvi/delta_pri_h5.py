@@ -10,12 +10,6 @@ Driver for the Delta PRI H5 PVI communicated wiht Modbus RTU protocol.
 
 '''
 
-import minimalmodbus
-import logging
-import sys
-from datetime import datetime, date, timedelta
-logger = logging.getLogger(__name__)
-
 __author__  = "Lee Shiueh"
 __email__   = "lee.shiueh@gmail.com"
 __license__ = "Apache License, Version 2.0"
@@ -399,6 +393,14 @@ Register_Polling_List = [
                     'DC Life Runtime',
                     ]
 
+import minimalmodbus
+import logging
+import sys
+from datetime import datetime, date, timedelta
+from dateutil.relativedelta import relativedelta
+
+logger = logging.getLogger(__name__)
+
 def get_history_reg_name_list():
     history_list = []
     for i in range(31):
@@ -494,6 +496,18 @@ class DeltaPRIH5(minimalmodbus.Instrument):
         
         return energy_daily_list
     
+    def get_energy_month_x_list(self):
+        rtc_year, rtc_month, rtc_day,_,_,_ = self.get_rtc_value()
+        rtc_date = datetime(rtc_year,rtc_month,rtc_day).date()
+    
+        energy_monthly_list = []
+        for i in range(31):
+            reg_name = 'Day-%s Wh' % i
+            energy_monthly_list.append([rtc_date,self.read_input_register_by_name(reg_name)])
+            rtc_date = date(rtc_date.year,rtc_month,1) + timedelta(days=-1)
+        
+        return energy_monthly_list
+    
     '''
     def set_rtc_with_sys_clock(self):
         #PVI Response ValueError
@@ -561,4 +575,6 @@ if __name__ == '__main__':
     #minimalmodbus._print_out('PVI RTC: %s' % str(instr.get_rtc_value()))
     #instr.set_rtc_with_sys_clock()
     
-    minimalmodbus._print_out(str(instr.get_energy_day_x_list()))
+    #minimalmodbus._print_out(str(instr.get_energy_day_x_list()))
+    minimalmodbus._print_out(str(instr.get_energy_month_x_list()))
+    

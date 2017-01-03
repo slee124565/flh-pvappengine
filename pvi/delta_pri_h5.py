@@ -485,7 +485,7 @@ class DeltaPRIH5(minimalmodbus.Instrument):
     
     def set_rtc_with_sys_clock(self):
         logger.debug('current rtc %s' % str(self.get_rtc_value()))
-        sys_time = datetime.now
+        sys_time = datetime.now()
         logger.debug('current system clock %s' % str(sys_time))
         self.write_register(int(INPUT_REGISTER['RTC_Year'][REGISTER_ADDRESS_COL])-1, 
                               sys_time.year,

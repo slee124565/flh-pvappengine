@@ -470,6 +470,17 @@ class DeltaPRIH5(minimalmodbus.Instrument):
         self.write_register(int(HOLDING_REGISTER[reg_name][REGISTER_ADDRESS_COL])-1, 
                               value,
                               functioncode = 6)
+    
+    def get_rtc_value(self):
+        self.set_register_measurement_index()
+        rtc_year = self.read_input_register_by_name('RTC_Year')
+        rtc_month = self.read_input_register_by_name('RTC_Month')
+        rtc_day = self.read_input_register_by_name('RTC_Day')
+        rtc_hour = self.read_input_register_by_name('RTC_Hour')
+        rtc_minute = self.read_input_register_by_name('RTC_Minute')
+        rtc_second = self.read_input_register_by_name('RTC_Second')
+        
+        return (rtc_year,rtc_month,rtc_day,rtc_hour,rtc_minute,rtc_second)
         
 if __name__ == '__main__':
     
@@ -497,8 +508,8 @@ if __name__ == '__main__':
     
     instr.set_register_measurement_index()
     
-    #for reg_name in Register_Polling_List:
-    for reg_name in get_history_reg_name_list():
+    for reg_name in Register_Polling_List:
+    #for reg_name in get_history_reg_name_list():
         reg_data = INPUT_REGISTER.get(reg_name)
         reg_addr = INPUT_REGISTER[reg_name][REGISTER_ADDRESS_COL]
         minimalmodbus._print_out('read register value for name: %s, address: %s ...' % (reg_name,reg_addr))
@@ -506,3 +517,4 @@ if __name__ == '__main__':
         minimalmodbus._print_out('%s, %s, %s' % (reg_name, reg_addr, reg_value))
         minimalmodbus._print_out('-'*20)
     
+        minimalmodbus._print_out('PVI RTC: %s' % instr.get_rtc_value())

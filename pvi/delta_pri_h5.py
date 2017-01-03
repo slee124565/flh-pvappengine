@@ -334,7 +334,42 @@ INPUT_REGISTER = {
         "1074",
         "Today Runtime",
         2
-    ]
+    ],
+    "Day-0 Wh": [
+        "2048",
+        "Day-0 Wh",
+        2
+    ],
+    "Day-1 Wh": [
+        "2050",
+        "Day-1 Wh",
+        2
+    ],
+    "Day-2 Wh": [
+        "2052",
+        "Day-2 Wh",
+        2
+    ],
+    "Day-3 Wh": [
+        "2054",
+        "Day-3 Wh",
+        2
+    ],
+    "Day-4 Wh": [
+        "2056",
+        "Day-4 Wh",
+        2
+    ],
+    "Day-5 Wh": [
+        "2058",
+        "Day-5 Wh",
+        2
+    ],
+    "Day-6 Wh": [
+        "2060",
+        "Day-6 Wh",
+        2
+    ],
 }
 '''
 Constant `INPUT_REGISTER` directory table. 
@@ -385,6 +420,13 @@ Register_Polling_List = [
                     'Today Runtime',
                     'DC Life Wh',
                     'DC Life Runtime',
+                    'Day-0 Wh',
+                    'Day-1 Wh',
+                    'Day-2 Wh',
+                    'Day-3 Wh',
+                    'Day-4 Wh',
+                    'Day-5 Wh',
+                    'Day-6 Wh',
                     ]
 
 class DeltaPRIH5(minimalmodbus.Instrument):

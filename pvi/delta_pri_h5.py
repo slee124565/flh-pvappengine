@@ -397,7 +397,6 @@ import minimalmodbus
 import logging
 import sys
 from datetime import datetime, date, timedelta
-from dateutil.relativedelta import relativedelta
 
 logger = logging.getLogger(__name__)
 

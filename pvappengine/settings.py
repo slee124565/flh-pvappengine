@@ -23,7 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'r^ek_^swu&o*_28a%gwn*1x5de8*o^kwhzl^yfv!1qu@6_sz_='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if sys.platform == 'darwin':
+    DEBUG = True
+else:
+    DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -59,7 +62,9 @@ ROOT_URLCONF = 'pvappengine.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR,'templates'),
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -78,14 +83,16 @@ WSGI_APPLICATION = 'pvappengine.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-if sys.platform == 'win32':
+if sys.platform == 'darwin':
+    # on MAC
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
-else:
+else: # linux
+    # on Pi
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',

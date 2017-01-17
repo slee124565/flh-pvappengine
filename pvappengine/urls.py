@@ -21,6 +21,8 @@ from pvappengine import http_api as appeng_http_api
 
 from accuweather.views import accuweather_geo_location_search,accuweather_location_key_geo_search
 
+from .views import DefaultView
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
@@ -34,4 +36,6 @@ urlpatterns = [
     url(r'^accu/key_geo_search/', accuweather_location_key_geo_search  ),
     
     url(r'^dbclean/$', appeng_http_api.clean_db  ),
+
+    url(r'^$', DefaultView.as_view(), name='DefaultView'  ),
 ]

@@ -1,0 +1,89 @@
+   <div id="wrapper">
+        <!-- add header here -->
+        <header id="masthead" class="site-header" role="banner">
+            <div class="top-bar container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#site-navigation">
+                        <span class="icon-bars">Toggle navigation</span>
+                    </button>
+                </div>
+
+                <div class="site-branding title-area">
+                    <h1 id="logo" class="site-title">
+                    <a href="#">{{dashboard.title}}</a>
+                    </h1>
+
+                    <div class="site-description" itemprop="description">{{dashboard.description}}
+                    </div>
+                </div>
+                <div class="header-search right">
+                    <a href="#" class="search-toggler">
+                    <span><i class="fa fa-search"></i></span>
+                    </a>
+                </div>
+                <nav id="site-navigation" class="site-navigation pull-right">
+                    <div id="navbar-collapse" class="navbar-collapse">
+                        <ul id="navigation" class="nav navbar-nav navbar-right">
+                       		<!--
+                            <li><a href="#">Settings</a></li>
+                    		-->
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </header><!-- #masthead -->
+
+        <!-- add main content here -->
+        <div id="content" class="site-content container">
+        <div id="primary" class="content-area">
+        <main id="main" class="site-main" role="main">
+
+            <article class="post-5 page type-page status-publish hentry">
+                <header class="entry-header">
+                  <h1 class="entry-title">{{dashboard.header}}</h1>
+                </header>
+                <!-- .entry-header -->
+
+                <div class="entry-content">
+                
+                	<div class="well">
+	                	<ul>
+	                		<li>Database</li>
+	                			<ul>
+			                		<li>Purge : clean all row data from tables.</li>
+			                		<li>Initialize : save history energy data from PVI register</li>
+	                			</ul>
+	                	</ul>
+                	</div>
+                	<div class="well">
+                		<ul>
+	                		<li>Internal Process</li>
+	                			<ul>
+	                				<li>Polling : periodic read Energy Day-0 value and save onto database</li>
+	                				<li>Log Daily Energy : save today energy when day changed</li>
+	                				<li>Log Monthly Energy : save this month energy when month changed</li>
+	                			</ul>
+	                	</ul>
+                	</div>
+
+                </div><!-- .entry-content -->
+
+                <footer class="entry-footer">
+                </footer><!-- .entry-footer -->
+
+            </article>
+
+        </main><!-- #main -->
+        </div><!-- #primary -->
+        </div><!-- #content -->
+
+        <footer id="colophon" class="site-footer container" role="contentinfo">
+            <div class="credit">
+                <a href="#" title="Semantic Personal Publishing Platform" target="_blank">Powered by FLH</a>.
+            </div>
+            <div class="divider-half"></div>
+        </footer><!-- #colophon -->
+
+
+    </div> <!-- #wrapper -->

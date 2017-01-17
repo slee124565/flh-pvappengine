@@ -1,6 +1,7 @@
 from django.db import models
 #from django.utils import timezone
 from datetime import datetime
+from django.utils import timezone
 
 def get_current_time_hour():
     return datetime.now().hour
@@ -25,5 +26,14 @@ class RegData(models.Model):
         self.prob_time = self.date.time()
         self.prob_hour = self.date.hour
         super(RegData, self).save(*args, **kwargs)   
+        
+class EnergyData(models.Model):
+    '''Energy Type Enum ['Daily', 'Monthly', 'Yearly']
+    '''
+    modbus_id = models.IntegerField('modbus address',default=0)
+    date = models.DateField('energy date',default=timezone.now)
+    type = models.CharField('energy type',max_length=20,default='')
+    value = models.IntegerField('energy value',default=0)
+    sync_flag = models.BooleanField('sync flag',default=False)
 
     

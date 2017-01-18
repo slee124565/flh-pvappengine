@@ -305,6 +305,10 @@ def do_action_on_pvs(pvi_config_list, action):
     for pvi_config in pvi_config_list:
         action(dev_serial_id, pvi_config)
 
+def do_load_pvi_eng_history_on_pvs(pvi_config_list):
+    do_action_on_pvs(pvi_config_list, action_load_pvi_eng_history)
+    
+
 def action_load_pvi_eng_history(dev_serial_id, pvi_config):
     pvi_type = pvi_config.get('type')
     if not pvi_type in pvi.PVI_TYPE_LIST:

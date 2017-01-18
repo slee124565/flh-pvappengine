@@ -142,6 +142,12 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR,'static/')
+STATICFILES_DIRS = [
+                    ("bower_components", os.path.join(BASE_DIR,"ngapp","bower_components")),
+                    ("styles", os.path.join(BASE_DIR,"ngapp","app","styles")),
+                    ("scripts", os.path.join(BASE_DIR,"ngapp","app","scripts")),
+                    ("images", os.path.join(BASE_DIR,"ngapp","app","images")),
+                    ]
 
 LOGGING = {
     'version': 1,              

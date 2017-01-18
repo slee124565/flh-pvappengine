@@ -21,7 +21,7 @@ from pvappengine import http_api as appeng_http_api
 
 from accuweather.views import accuweather_geo_location_search,accuweather_location_key_geo_search
 
-from .views import DefaultView
+from .views import DefaultView, AngularTemplateView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -37,5 +37,6 @@ urlpatterns = [
     
     url(r'^dbclean/$', appeng_http_api.clean_db  ),
 
+    url(r'^views/(?P<item>[A-Za-z0-9\_\-\.\/]+)\.html$', AngularTemplateView.as_view()),
     url(r'^$', DefaultView.as_view(), name='DefaultView'  ),
 ]

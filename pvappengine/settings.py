@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'dbconfig.apps.DbconfigConfig',
     'pvi.apps.PviConfig',
     'accuweather.apps.AccuweatherConfig',
-    'wordpress.apps.WordpressConfig',
+#    'wordpress.apps.WordpressConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

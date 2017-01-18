@@ -11,7 +11,6 @@ from time import sleep
 from datetime import timedelta, time
 
 import logging
-from pvi.delta_pri_h5 import modbus_id
 logger = logging.getLogger(__name__)
 
 def pvi_query_info_energy_hourly_list():
@@ -352,10 +351,11 @@ def delta_h5_load_history(inverter):
             
         for t_date, t_value in x_list:
             logger.debug('%s,%s' % (t_date,t_value))
-            eng_data = EnergyData.objects.get_or_create(
+            eng_data,created = EnergyData.objects.get_or_create(
                                 modbus_id = inverter.slaveaddress,
                                 date = t_date,
                                 type = eng_type)
+            logger.debug('eng_data entry created %s' % created)
             eng_data.value = t_value
             eng_data.save()
         

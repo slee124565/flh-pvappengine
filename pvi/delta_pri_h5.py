@@ -429,11 +429,13 @@ class DeltaPRIH5(minimalmodbus.Instrument):
     
     
     '''
-
+    portname = None
+    slaveaddress = None
 
     def __init__(self, portname, slaveaddress):
         minimalmodbus.Instrument.__init__(self, portname, slaveaddress)
-
+        self.portname = portname
+        self.slaveaddress = slaveaddress
 
     def read_input_register_by_name(self, reg_name):
         try:

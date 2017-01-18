@@ -28,7 +28,7 @@ class RegData(models.Model):
         super(RegData, self).save(*args, **kwargs)   
         
 class EnergyData(models.Model):
-    '''Energy Type Enum ['Daily', 'Monthly', 'Yearly']
+    '''Energy Type Enum ['DAILY', 'MONTHLY', 'YEARLY']
     '''
     modbus_id = models.IntegerField('modbus address',default=0)
     date = models.DateField('energy date',default=timezone.now)

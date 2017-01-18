@@ -26,7 +26,7 @@ SECRET_KEY = 'r^ek_^swu&o*_28a%gwn*1x5de8*o^kwhzl^yfv!1qu@6_sz_='
 if sys.platform == 'darwin':
     DEBUG = True
 else:
-    DEBUG = False
+    DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -87,8 +87,11 @@ if sys.platform == 'darwin':
     # on MAC
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'pvs',
+            'HOST': 'localhost',
+            'USER': 'root',
+            'PASSWORD': '',
         }
     }
 else: # linux

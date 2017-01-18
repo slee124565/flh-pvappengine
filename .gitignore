@@ -4,3 +4,4 @@ __pycache__
 /.pydevproject
 /.settings
 .DS_Store
+**/*.pyc

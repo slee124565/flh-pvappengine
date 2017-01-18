@@ -12,7 +12,6 @@ import pvi
 import accuweather.views as accuweather_api
 from accuweather import CurrConditionType
 from dbconfig.views import get_app_json_db_config
-from wordpress.models import WpOptions
 
 import logging, json
 import accuweather
@@ -339,15 +338,14 @@ def query_chart_data(request,data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_
         
 def clean_db(request):
     pvi.models.RegData.objects.all().delete()
+    pvi.models.EnergyData.objects.all().delete()
     accuweather.models.CurrConditions.objects.all().delete()
-    queryset = WpOptions.objects.filter(option_name='siteurl')
-    if queryset.count() > 0:
-        for entry in queryset:
-            siteurl = str(entry.option_value)
-            if (siteurl != ''):
-                return redirect(siteurl)
-    else:
-        return HttpResponse('DB table pvi_regdata & accuweather_currcondition rowdata purged')
+    return HttpResponse('DB tables are purged')
 
-        
+from pvi.views import do_action_on_pvs, action_load_pvi_eng_history
+def init_db(request):
+    do_action_on_pvs(
+        get_app_json_db_config('pvi', pvi.DEFAULT_DB_CONFIG),
+        action_load_pvi_eng_history)    
+    return HttpResponse('PVS Energy History Loaded')        
         

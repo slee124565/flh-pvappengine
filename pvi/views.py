@@ -3,7 +3,7 @@ from django.db.models import Max
 from datetime import datetime, date
 
 from pvi import PVIType, PVIQueryInfo
-from pvi.models import RegData
+from pvi.models import RegData, EnergyData
 import pvi.delta_pri_h5 as h5
 import os
 import pvi
@@ -11,7 +11,7 @@ from time import sleep
 from datetime import timedelta, time
 
 import logging
-from sys import exc_info
+from pvi.delta_pri_h5 import modbus_id
 logger = logging.getLogger(__name__)
 
 def pvi_query_info_energy_hourly_list():
@@ -295,3 +295,67 @@ def save_all_pvi_input_register_value(pvi_config_list):
                     
         logger.info('='*20)
     
+def do_action_on_pvs(pvi_config_list, action):
+    
+    dev_serial_list = get_serial_device_list()
+    if len(dev_serial_list) <= 0:
+        raise Exception('No serial device found!')
+    
+    dev_serial_id = dev_serial_list[0]
+
+    for pvi_config in pvi_config_list:
+        action(dev_serial_id, pvi_config)
+
+def action_load_pvi_eng_history(dev_serial_id, pvi_config):
+    pvi_type = pvi_config.get('type')
+    if not pvi_type in pvi.PVI_TYPE_LIST:
+        raise Exception('Unknown PVI Type %s' % pvi_type)
+
+#     pvi_name = pvi_config.get('name')
+    modbus_id = pvi_config.get('modbus_id')
+    if pvi_type == pvi.PVI_TYPE_DELTA_PRI_H5:
+        inverter = h5.DeltaPRIH5(dev_serial_id,int(modbus_id))
+        inverter.serial.baudrate = pvi_config.get('serial').get('baudrate')
+        inverter.serial.bytesize = pvi_config.get('serial').get('bytesize') 
+        inverter.serial.parity = pvi_config.get('serial').get('parity') 
+        inverter.serial.stopbits = pvi_config.get('serial').get('stopbits')   
+        inverter.serial.timeout = pvi_config.get('serial').get('timeout')
+        delta_h5_action_with_retry(inverter,delta_h5_load_history)
+
+def delta_h5_action_with_retry(inverter, pvi_action):    
+    
+    retry_count = 0
+    reg_read_success = False
+    MAX_RETRY_TIME = 5
+    while ( (retry_count < MAX_RETRY_TIME) and (reg_read_success == False) ):
+        try:
+            reg_read_success = True
+            pvi_action(inverter)
+        except:
+            retry_count += 1
+            logger.warning('inverter connect exception, try %s!' % retry_count
+                           , exc_info = True)
+            sleep(1)
+
+def delta_h5_load_history(inverter):  
+
+    inverter.set_register_measurement_index()
+    eng_type_list = ('DAILY', 'MONTHLY')
+    
+    for eng_type in eng_type_list:
+        if eng_type == 'DAILY':
+            x_list = inverter.get_energy_day_x_list()
+        elif eng_type == 'MONTHLY':
+            x_list = inverter.get_energy_month_x_list()
+        else:
+            raise Exception('eng_type unknown!')
+            
+        for t_date, t_value in x_list:
+            logger.debug('%s,%s' % (t_date,t_value))
+            eng_data = EnergyData.objects.get_or_create(
+                                modbus_id = inverter.slaveaddress,
+                                date = t_date,
+                                type = eng_type)
+            eng_data.value = t_value
+            eng_data.save()
+        

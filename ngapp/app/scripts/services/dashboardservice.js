@@ -16,4 +16,9 @@ angular.module('pvsApp')
 	  dashboardService.dbClean = function() {
 		return $http.get(apiBaseURL + 'dbclean/');  
 	  };
+	  
+	  dashboardService.dbInitialize = function() {
+		  return $http.get(apiBaseURL + 'dbinit/');
+	  };
   }]);
+

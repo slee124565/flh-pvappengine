@@ -49,10 +49,14 @@
                 
                 	<div class="well">
 	                	<ul>
-	                		<li>Database</li>
+	                		<li><p>Database</p></li>
 	                			<ul>
-			                		<li>Purge : clean all row data from tables.</li>
-			                		<li>Initialize : save history energy data from PVI register</li>
+			                		<li><p><button type="button" class="btn btn-danger" 
+			                					ng-click="dashboard.dbClean()" >
+			                			Purge</button> : clean all row data from tables.</p></li>
+			                		<li><p><button type="button" class="btn btn-danger"
+			                					ng-click="dashboard.dbInit()" >
+			                			Initialize</button> : save history energy data from PVI register</p></li>
 	                			</ul>
 	                	</ul>
                 	</div>

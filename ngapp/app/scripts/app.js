@@ -24,7 +24,18 @@ angular
 //	                return SettingsService.getSiteConfig();
 //	            }]
 //	        }
+	    })
+	    .state({
+	    	name: 'site',
+	    	url: '/site',
+	    	templateUrl: 'views/site.html',
+	    	controller: 'SiteCtrl as site',
+	        resolve: {
+	            siteMeta: ['PvsService', function(PvsService) {
+	                return PvsService.getSiteMeta();
+	            }]
+	        }
 	    });
 	
-	    $urlRouterProvider.otherwise('/dashboard');
+	    $urlRouterProvider.otherwise('/site');
 	});

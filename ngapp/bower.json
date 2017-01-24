@@ -5,7 +5,8 @@
     "angular": "^1.4.0",
     "bootstrap": "^3.2.0",
     "angular-resource": "^1.4.0",
-    "angular-ui-router": "ui-router#^0.3.2"
+    "angular-ui-router": "ui-router#^0.3.2",
+    "amcharts3": "^3.20.20"
   },
   "devDependencies": {
     "angular-mocks": "^1.4.0"

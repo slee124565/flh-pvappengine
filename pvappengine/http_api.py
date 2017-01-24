@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import redirect
 
 from enum import Enum
@@ -336,11 +336,22 @@ def query_chart_data(request,data_type=PVSChartsDataTypeEnum.PVS_AMCHARTS_DAILY_
     response['Expires'] = 0
     return response
         
-def clean_db(request):
-    pvi.models.RegData.objects.all().delete()
-    pvi.models.EnergyData.objects.all().delete()
-    accuweather.models.CurrConditions.objects.all().delete()
-    return HttpResponse('DB tables are purged')
+def clean_db(request,table_name=None):
+    if table_name is None:
+        table_name = 'all'
+        pvi.models.RegData.objects.all().delete()
+        pvi.models.EnergyData.objects.all().delete()
+        accuweather.models.CurrConditions.objects.all().delete()
+    elif table_name == 'pvi_regdata':
+        pvi.models.RegData.objects.all().delete()
+    elif table_name == 'pvi_energydata':
+        pvi.models.EnergyData.objects.all().delete()
+    elif table_name == 'accuweather_currconditions':
+        accuweather.models.CurrConditions.objects.all().delete()
+    else:
+        raise Http404
+    
+    return HttpResponse('DB %s tables are purged' % table_name)
 
 from pvi.views import do_action_on_pvs, action_load_pvi_eng_history
 def init_db(request):

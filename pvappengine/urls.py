@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^accu/key_geo_search/', accuweather_location_key_geo_search  ),
     
     url(r'^dbclean/$', appeng_http_api.clean_db  ),
+    url(r'^dbclean/(?P<table_name>\w+)/$', appeng_http_api.clean_db  ),
     url(r'^dbinit/$', appeng_http_api.init_db  ),
 
     url(r'^views/(?P<item>[A-Za-z0-9\_\-\.\/]+)\.html$', AngularTemplateView.as_view()),

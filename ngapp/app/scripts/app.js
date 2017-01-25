@@ -35,7 +35,41 @@ angular
 	                return PvsService.getSiteMeta();
 	            }]
 	        }
-	    });
+	    })
+	    .state({
+	    	name: 'basicmeta',
+	    	url: '/basicmeta',
+	    	templateUrl: 'views/basicmeta.html',
+	    	controller: 'BasicMeta as meta'
+//	        resolve: {
+//	            siteMeta: ['PvsService', function(PvsService) {
+//	                return PvsService.getBasicMeta();
+//	            }]
+//	        }
+	    })
+	    .state({
+	    	name: 'engexport',
+	    	url: '/engexport',
+	    	templateUrl: 'views/engexport.html',
+	    	controller: 'EngExport as export'
+//	        resolve: {
+//	            siteMeta: ['PvsService', function(PvsService) {
+//	                return PvsService.getBasicMeta();
+//	            }]
+//	        }
+	    })
+	    .state({
+	    	name: 'alarmsettings',
+	    	url: '/alarmsettings',
+	    	templateUrl: 'views/alarmsettings.html',
+	    	controller: 'AlarmSettings as alarm'
+//	        resolve: {
+//	            siteMeta: ['PvsService', function(PvsService) {
+//	                return PvsService.getSiteMeta();
+//	            }]
+//	        }
+	    })
+;
 	
 	    $urlRouterProvider.otherwise('/site');
 	});

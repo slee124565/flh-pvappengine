@@ -20,9 +20,57 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <ui-view></ui-view>
+   <div id="wrapper">
+        <!-- add header here -->
+        <header id="masthead" class="site-header" role="banner">
+            <div class="top-bar container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#site-navigation">
+                        <span class="icon-bars">Toggle navigation</span>
+                    </button>
+                </div>
+
+                <div class="site-branding title-area">
+                    <h1 id="logo" class="site-title">
+					<a href="#"><img class="site-logo" alt="Brand" src="images/sample-logo.jpg"></a>
+                    <a href="#">太陽能發電系統</a>
+                    </h1>
+                    <div class="site-description" itemprop="description">{{site.meta.description}}
+                    </div>			
+                </div>
+                <div class="header-search right">
+                    <a href="#" class="search-toggler">
+                    <span><i class="fa fa-search"></i></span>
+                    </a>
+                </div>
+                <nav id="site-navigation" class="site-navigation pull-right">
+                    <div id="navbar-collapse" class="navbar-collapse">
+                        <ul id="navigation" class="nav navbar-nav navbar-right">
+                        	<li><span class="glyphicon glyphicon-one-fine-red-dot"></span></li>
+                            <li><a ui-sref="basicmeta">基本資料</a></li>
+                            <li><a ui-sref="alarmsettings">警報設定</a></li>
+                            <li><a ui-sref="engexport">資料匯出</a></li>
+                            <li><a ui-sref="dashboard">系統設定</a></li>
+                        </ul>
+                    </div>			
+                </nav>
+            </div>
+        </header><!-- #masthead -->
+                
+	    <ui-view></ui-view>
 	
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+        <footer id="colophon" class="site-footer container" role="contentinfo">
+            <div class="credit">
+                <a href="#" title="Semantic Personal Publishing Platform" target="_blank">Powered by FLH</a>.
+            </div>
+            <div class="divider-half"></div>
+        </footer><!-- #colophon -->
+
+
+    </div> <!-- #wrapper -->
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID 
      <script>
        !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
        (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
@@ -32,6 +80,7 @@
        ga('create', 'UA-XXXXX-X');
        ga('send', 'pageview');
     </script>
+    -->
    
 
     <!-- build:js(.) scripts/vendor.js -->
@@ -53,6 +102,9 @@
         <script src="scripts/controllers/site.js"></script>
         <script src="scripts/services/pvsservice.js"></script>
         <script src="scripts/services/amchartsservice.js"></script>
+        <script src="scripts/controllers/basicmeta.js"></script>
+        <script src="scripts/controllers/alarmsettings.js"></script>
+        <script src="scripts/controllers/engexport.js"></script>
         <!-- endbuild -->
 </body>
 </html>

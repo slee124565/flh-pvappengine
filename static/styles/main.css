@@ -45,7 +45,7 @@ Nicolas Gallagher and Jonathan Neal http://necolas.github.com/normalize.css/
 --------------------------------------------------------------*/
 body {
   background: #f2f2f2;
-  font: 300 16px/26px 'Varela Round', sans-serif;
+  font: 300 24px/34px 'Varela Round', sans-serif;
   color: #333333;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -117,7 +117,7 @@ table {
   border-bottom: 1px solid #333333;
   border-collapse: collapse;
   border-spacing: 0;
-  font-size: 14px;
+  font-size: 18px;
   line-height: 2;
   margin: 0 0 20px;
   width: 100%;
@@ -290,6 +290,10 @@ div.aligncenter,
 }
 .site-branding {
   float: left;
+  width: 350px;
+}
+.site-logo {
+  height: 75px;	
 }
 .home h1 {
   margin: 0;
@@ -427,7 +431,7 @@ div.aligncenter,
 .nav > li > a {
   color: #c1c0c0;
   text-transform: uppercase;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 700;
   padding: 20px 15px;
 }
@@ -1212,6 +1216,11 @@ div.aligncenter,
   width: 20%;
   background: #e9e9e9;
   height: 2px;
+}
+.glyphicon-one-fine-red-dot:before {
+    content:"\25cf";
+    font-size: 2em;
+    color: red;
 }
 /*--------------------------------------------------------------
 9.0 Media Queries
